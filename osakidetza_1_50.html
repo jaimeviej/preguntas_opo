@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osakidetza OPE — Preguntas 1-50</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --verde: #006b5e;
+    --verde-claro: #00a88f;
+    --rojo: #c0392b;
+    --azul: #2c3e6b;
+    --fondo: #f4f7f6;
+    --blanco: #ffffff;
+    --gris: #6b7b8d;
+    --borde: #dde4e0;
+    --correcto: #1a7a5e;
+    --incorrecto: #b83232;
+    --correcto-bg: #e6f7f1;
+    --incorrecto-bg: #fdecea;
+    --sombra: 0 4px 24px rgba(0,107,94,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--fondo);
+    color: #1a2a24;
+    min-height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  header {
+    background: var(--verde);
+    color: white;
+    padding: 28px 24px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  }
+
+  header h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  header .subtitulo {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  .barra-progreso-wrap {
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .barra-progreso {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .barra-progreso-fill {
+    height: 100%;
+    background: var(--verde-claro);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+
+  .progreso-texto {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    white-space: nowrap;
+  }
+
+  .stats-header {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    font-size: 0.75rem;
+  }
+
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    opacity: 0.9;
+  }
+
+  .stat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .dot-correcto { background: var(--verde-claro); }
+  .dot-incorrecto { background: #ff8a80; }
+
+  .contenedor {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  .pregunta-card {
+    background: var(--blanco);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--sombra);
+    border: 1px solid var(--borde);
+    transition: opacity 0.3s;
+  }
+
+  .pregunta-card.resuelta {
+    border-left: 4px solid var(--verde-claro);
+  }
+
+  .pregunta-card.resuelta.fallo {
+    border-left: 4px solid var(--incorrecto);
+  }
+
+  .pregunta-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--verde);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .pregunta-texto {
+    font-size: 0.95rem;
+    font-weight: 500;
+    line-height: 1.55;
+    margin-bottom: 18px;
+    color: #1a2a24;
+  }
+
+  .opciones {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .opcion-btn {
+    text-align: left;
+    background: var(--fondo);
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-size: 0.88rem;
+    font-family: 'DM Sans', sans-serif;
+    color: #1a2a24;
+    cursor: pointer;
+    transition: all 0.18s;
+    line-height: 1.45;
+  }
+
+  .opcion-btn:hover:not(:disabled) {
+    border-color: var(--verde);
+    background: rgba(0, 168, 143, 0.07);
+    transform: translateX(2px);
+  }
+
+  .opcion-btn:disabled {
+    cursor: default;
+  }
+
+  .opcion-btn .letra {
+    font-weight: 700;
+    color: var(--gris);
+    margin-right: 6px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+  }
+
+  .opcion-btn.correcta {
+    background: var(--correcto-bg);
+    border-color: var(--correcto);
+    color: var(--correcto);
+    font-weight: 500;
+  }
+
+  .opcion-btn.correcta .letra {
+    color: var(--correcto);
+  }
+
+  .opcion-btn.incorrecta {
+    background: var(--incorrecto-bg);
+    border-color: var(--incorrecto);
+    color: var(--incorrecto);
+    font-weight: 500;
+  }
+
+  .opcion-btn.incorrecta .letra {
+    color: var(--incorrecto);
+  }
+
+  .opcion-btn.correcta-marcada {
+    background: var(--correcto-bg);
+    border-color: var(--correcto);
+    color: var(--correcto);
+    font-weight: 600;
+  }
+
+  .resultado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 12px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .badge-ok {
+    background: var(--correcto-bg);
+    color: var(--correcto);
+  }
+
+  .badge-error {
+    background: var(--incorrecto-bg);
+    color: var(--incorrecto);
+  }
+
+  .pregunta-nula {
+    background: #fff8e1;
+    border: 1px dashed #f0c040;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #7a5c00;
+    margin-top: 10px;
+  }
+
+  .botones-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--blanco);
+    border-top: 1px solid var(--borde);
+    padding: 12px 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.07);
+    z-index: 99;
+  }
+
+  .btn-accion {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+    letter-spacing: 0.02em;
+  }
+
+  .btn-resetear {
+    background: var(--fondo);
+    color: var(--gris);
+    border: 1.5px solid var(--borde);
+  }
+
+  .btn-resetear:hover {
+    background: var(--incorrecto-bg);
+    border-color: var(--incorrecto);
+    color: var(--incorrecto);
+  }
+
+  .btn-fallos {
+    background: var(--fondo);
+    color: var(--azul);
+    border: 1.5px solid #b0bcd8;
+  }
+
+  .btn-fallos:hover {
+    background: #e8ecf8;
+  }
+
+  .btn-aleatorio {
+    background: var(--verde);
+    color: white;
+  }
+
+  .btn-aleatorio:hover {
+    background: var(--verde-claro);
+  }
+
+  .seccion-titulo {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--gris);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 4px 4px;
+    margin-bottom: 4px;
+  }
+
+  .oculto { display: none; }
+
+  .banner-completado {
+    background: linear-gradient(135deg, var(--verde) 0%, var(--verde-claro) 100%);
+    color: white;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: var(--sombra);
+  }
+
+  .banner-completado h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .banner-completado .puntuacion {
+    font-size: 2.5rem;
+    font-weight: 800;
+    font-family: 'Syne', sans-serif;
+    margin: 8px 0;
+  }
+
+  .banner-completado p {
+    opacity: 0.9;
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 500px) {
+    .pregunta-texto { font-size: 0.88rem; }
+    .opcion-btn { font-size: 0.82rem; padding: 10px 12px; }
+    header h1 { font-size: 1.1rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏥 Osakidetza OPE — Preguntas 1 a 50</h1>
+  <div class="subtitulo">Temario Común · Batería de 200 preguntas</div>
+  <div class="barra-progreso-wrap">
+    <div class="barra-progreso">
+      <div class="barra-progreso-fill" id="barraFill" style="width:0%"></div>
+    </div>
+    <span class="progreso-texto" id="progresoTexto">0 / 50</span>
+  </div>
+  <div class="stats-header">
+    <div class="stat-item"><span class="stat-dot dot-correcto"></span><span id="statOk">0 correctas</span></div>
+    <div class="stat-item"><span class="stat-dot dot-incorrecto"></span><span id="statFail">0 incorrectas</span></div>
+  </div>
+</header>
+
+<div class="contenedor" id="contenedor"></div>
+
+<div class="botones-footer">
+  <button class="btn-accion btn-resetear" onclick="resetearTodo()">↺ Reiniciar</button>
+  <button class="btn-accion btn-fallos" onclick="mostrarSoloFallos()">⚠ Solo fallos</button>
+  <button class="btn-accion btn-aleatorio" onclick="ordenAleatorio()">🔀 Aleatorio</button>
+</div>
+
+<script>
+const STORAGE_KEY = 'osakidetza_q1_50';
+
+const RESPUESTAS = {1:'A',2:'B',3:'A',4:'A',5:'C',6:'C',7:'B',8:'D',9:'C',10:'D',11:'B',12:'A',13:'A',14:'D',15:'D',16:'D',17:'B',18:'A',19:'C',20:'A',21:'B',22:'C',23:'A',24:'C',25:'B',26:'D',27:'D',28:'A',29:'D',30:'B',31:'A',32:'C',33:'B',34:'D',35:'A',36:'D',37:'A',38:'B',39:'C',40:'B',41:'A',42:'C',43:'A',44:'C',45:'B',46:'C',47:'A',48:'B',49:'A',50:'C'};
+
+const PREGUNTAS = [
+  {n:1, texto:"De acuerdo con las normas generales de ordenación de las profesiones sanitarias, para poder ejercer una profesión sanitaria será requisito imprescindible:", opts:{A:"La colegiación, cuando una ley estatal establezca esta obligación para el ejercicio de una profesión titulada o algunas actividades propias de ésta.",B:"La inexistencia de inhabilitación o suspensión para el ejercicio profesional por sentencia judicial, aunque no sea firme, durante el periodo de tiempo que fije ésta; por resolución sancionadora impuesta por un colegio profesional sanitario, cuando una ley estatal establezca para este ejercicio la obligación de pertenecer al colegio profesional respectivo durante el periodo de tiempo que fije ésta; o por resolución administrativa sancionadora firme, durante el periodo de tiempo que fije ésta, cuando se ejerza la profesión en el ámbito de la asistencia sanitaria pública.",C:"Tener suscrito y vigente un seguro de responsabilidad, un aval u otra garantía financiera, ya sean de protección personal o colectiva, que cubra las indemnizaciones que se puedan derivar de la responsabilidad profesional por un eventual daño a las personas, causado con ocasión de la prestación de tal asistencia o servicios, cuando se ejerza la profesión en el ámbito de la asistencia sanitaria pública.",D:"Todo lo anterior."}},
+  {n:2, texto:"Según lo establecido en la normativa vigente sobre ordenación de las profesiones sanitarias, para poder ejercer una profesión sanitaria:", opts:{A:"Se ha de tener suscrito y vigente un seguro de responsabilidad que cubra las indemnizaciones que se puedan derivar de la responsabilidad profesional por un eventual daño a las personas causado con ocasión de la prestación de tal asistencia o servicios cuando se ejerza la profesión en el ámbito de la asistencia sanitaria privada, no siendo suficiente un aval u otra garantía financiera de protección colectiva.",B:"Se ha de tener suscrito y vigente un seguro de responsabilidad, un aval u otra garantía financiera, sean de protección personal o colectiva, que cubra las indemnizaciones que se puedan derivar de la responsabilidad profesional por un eventual daño a las personas causado con ocasión de la prestación de tal asistencia o servicios cuando se ejerza la profesión en el ámbito de la asistencia sanitaria privada.",C:"Se ha de tener suscrito y vigente un seguro de responsabilidad, un aval u otra garantía financiera, sean de protección personal o colectiva, que cubra las indemnizaciones que se puedan derivar de la responsabilidad profesional por un eventual daño a las personas causado con ocasión de la prestación de tal asistencia o servicios cuando se ejerza la profesión en el ámbito de la asistencia sanitaria pública.",D:"Todas las opciones son falsas."}},
+  {n:3, texto:"Según la normativa vigente, el órgano encargado del Registro Estatal de Profesionales Sanitarios podrá (indíquese la que sea correcta):", opts:{A:"Consultar los datos de carácter personal de la población profesional sanitaria contenidos en los archivos y ficheros del DNI y del NIE competencia del Ministerio del Interior, para contrastar la veracidad de la información que consta en el registro.",B:"Consultar los datos de carácter personal de la población profesional sanitaria contenidos en los archivos y ficheros del DNI y del NIE competencia del Ministerio del Interior, para contrastar la veracidad de la información que consta en el registro, pero solo si la persona titular no se ha opuesto explícitamente.",C:"Consultar los datos de carácter personal de los profesionales sanitarios contenidos en los archivos y ficheros del DNI y del NIE competencia del Ministerio del Interior, para contrastar la veracidad de la información que consta en el registro, pero solo si el titular de los datos da su consentimiento expreso.",D:"Solo podrá consultar los datos de carácter personal de la población profesional sanitaria contenidos en los archivos y ficheros del DNI y del NIE en el curso de una investigación sobre una infracción administrativa."}},
+  {n:4, texto:"En el marco de la ordenación de las profesiones sanitarias, las personas pacientes:", opts:{A:"Tienen derecho a la libre elección del personal facultativo que debe atenderles, tanto si su ejercicio profesional se desarrolla en el sistema público como en el ámbito privado.",B:"Tienen derecho a la libre elección del personal facultativo que debe atenderles, pero solo si su ejercicio profesional se desarrolla en el sistema público.",C:"Tienen derecho a la libre elección del personal facultativo que debe atenderles, pero solo si su ejercicio profesional se desarrolla en el ámbito privado.",D:"Ninguna de las anteriores es correcta."}},
+  {n:5, texto:"Según la normativa de ordenación de las profesiones sanitarias, el personal profesional y las personas responsables de los centros sanitarios facilitarán a sus pacientes el ejercicio del derecho a conocer:", opts:{A:"El nombre, la titulación, la especialidad y la hoja de servicios del personal sanitario que les atiende, así como la categoría y función de dicho personal, si así estuvieran definidas en su centro o institución.",B:"El nombre, la titulación y la especialidad del personal sanitario que les atiende y su categoría, pero no su función en su centro o institución.",C:"El nombre, la titulación y la especialidad del personal sanitario que les atiende, así como la categoría y función de dicho personal, si así estuvieran definidas en su centro o institución.",D:"El nombre, la titulación y la especialidad del personal sanitario que les atiende, pero no su categoría y función en su centro o institución."}},
+  {n:6, texto:"De acuerdo con las normas generales de ordenación de las profesiones sanitarias, el ejercicio del derecho del personal profesional sanitario a la renuncia a la atención a una persona paciente queda condicionado a que (señálese la respuesta incorrecta):", opts:{A:"Su renuncia no conlleve desatención de la persona paciente.",B:"La renuncia se ejerza de acuerdo con procedimientos regulares.",C:"Quede constancia, aunque no sea formal, de la renuncia.",D:"La renuncia se ejerza de acuerdo con procedimientos establecidos y explícitos."}},
+  {n:7, texto:"Los centros sanitarios revisarán que el personal sanitario de su plantilla cumple los requisitos necesarios para ejercer la profesión conforme a lo previsto en la Ley 44/2003, de 21 de noviembre, de ordenación de las profesiones sanitarias y en las demás normas aplicables:", opts:{A:"Cada cinco años como mínimo.",B:"Cada tres años como mínimo.",C:"Cada dos años como mínimo.",D:"Cada cuatro años como mínimo."}},
+  {n:8, texto:"Según dispone la Ley 44/2003, de 21 de noviembre, de ordenación de las profesiones sanitarias, cuando una actuación sanitaria se realice por un equipo de profesionales (señálese la respuesta incorrecta):", opts:{A:"Se articulará, preferentemente, de forma jerarquizada, atendiendo a los criterios de conocimientos y competencia y, en su caso, al de titulación del personal profesional que integra el equipo.",B:"Se articulará de forma jerarquizada o colegiada, atendiendo a los criterios de conocimientos y competencia y, en su caso, al de titulación del personal profesional que integra el equipo.",C:"Se articulará de forma preferentemente colegiada, atendiendo a los criterios de conocimientos y competencia y, en su caso, al de titulación del personal profesional que integra el equipo.",D:"Ninguna de las anteriores es correcta."}},
+  {n:9, texto:"De acuerdo con la Ley 44/2003, de 21 de noviembre, de ordenación de las profesiones sanitarias, diga cuál de los siguientes principios generales de la relación entre las personas que ejercen profesiones sanitarias y las personas atendidas no es tal:", opts:{A:"El personal profesional tiene el deber de hacer un uso racional de los recursos diagnósticos y terapéuticos a su cargo, tomando en consideración, entre otros, los costes de sus decisiones y evitando la sobreutilización, la infrautilización y la inadecuada utilización de los mismos.",B:"El personal profesional tiene el deber de prestar una atención sanitaria técnica y profesional adecuada a las necesidades de salud de las personas que atiende, de acuerdo con el estado de desarrollo de los conocimientos científicos de cada momento.",C:"El personal profesional tiene el deber de proporcionar a las personas pacientes información precisa sobre su formación profesional, la forma en que han actualizado sus conocimientos y las demandas de responsabilidad que hayan podido derivar en responsabilidades administrativas.",D:"El personal profesional tiene el deber de respetar la personalidad, dignidad e intimidad de las personas a su cuidado y debe respetar su participación en las tomas de decisiones que les afecten."}},
+  {n:10, texto:"De acuerdo con la Ley 44/2003, de 21 de noviembre, de ordenación de las profesiones sanitarias, los centros sanitarios acreditados para desarrollar programas de formación continuada:", opts:{A:"Deberán contar con jefaturas de estudios, con la coordinación docente y con el personal tutor de la formación que resulten adecuados en función de las actividades a desarrollar, así como con una figura de defensoría del alumnado.",B:"Deberán contar una comisión de docencia, así como con jefaturas de estudios, coordinación docente y personal tutor de la formación que resulten adecuados en función de las actividades a desarrollar.",C:"Deberán contar una comisión de docencia y con una figura de defensoría del alumnado, así como con jefaturas de estudios, coordinación docente y personal tutor de la formación que resulten adecuados en función de las actividades a desarrollar.",D:"Todas las anteriores son incorrectas."}},
+  {n:11, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, sus disposiciones se aplicarán a:", opts:{A:"A los servicios sanitarios de financiación pública y a los privados, en los mismos términos.",B:"A los servicios sanitarios de financiación pública. También a los privados en lo que se refiere al control de las actividades de salud pública y en materia de garantías de información, seguridad y calidad.",C:"A los servicios sanitarios de financiación pública y a los privados concertados.",D:"Únicamente a los servicios sanitarios de financiación pública."}},
+  {n:12, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la ciudadanía tendrá los siguientes derechos en el conjunto del Sistema Nacional de Salud:", opts:{A:"A recibir asistencia sanitaria en su comunidad autónoma de residencia.",B:"A recibir el reembolso de los gastos derivados de la asistencia en la sanidad privada cuando se trate de servicios recogidos en el catálogo de prestaciones del Sistema Nacional de Salud.",C:"A recibir el reembolso de los gastos derivados de la asistencia sanitaria del catálogo de prestaciones del Sistema Nacional de Salud que pudiera requerir del servicio de salud de la comunidad autónoma en la que se encuentre desplazado/a.",D:"Ninguna de las respuestas anteriores es correcta."}},
+  {n:13, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la cartera común de servicios del Sistema Nacional de Salud se articula en torno a las siguientes modalidades:", opts:{A:"Cartera común básica de servicios asistenciales, cartera común suplementaria y cartera común de servicios accesorios.",B:"Cartera común básica nacional de servicios asistenciales y cartera común autonómica de servicios asistenciales.",C:"Cartera común nacional básica de servicios asistenciales, cartera común suplementaria autonómica y cartera común de servicios accesorios autonómicos.",D:"Cartera común nacional y autonómica básica de servicios asistenciales, cartera común nacional y autonómica suplementaria y cartera común nacional y autonómica de servicios accesorios."}},
+  {n:14, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la cartera común básica de servicios asistenciales del Sistema Nacional de Salud comprende:", opts:{A:"Todas las actividades asistenciales de prevención, diagnóstico, tratamiento y rehabilitación que se realicen en centros sanitarios o sociosanitarios, así como el transporte sanitario urgente, la prestación farmacéutica y la prestación ortoprotésica, cubiertos de forma completa por financiación pública.",B:"Todas las actividades asistenciales de prevención, diagnóstico, tratamiento y rehabilitación que se realicen en centros sanitarios o sociosanitarios, así como el transporte sanitario urgente y la prestación farmacéutica, cubiertos de forma completa por financiación pública.",C:"Todas las actividades asistenciales de prevención, diagnóstico, tratamiento y rehabilitación que se realicen en centros sanitarios o sociosanitarios, así como el transporte sanitario urgente, y la prestación ortoprotésica, cubiertos de forma completa por financiación pública.",D:"Todas las actividades asistenciales de prevención, diagnóstico, tratamiento y rehabilitación que se realicen en centros sanitarios o sociosanitarios, así como el transporte sanitario urgente, cubiertos de forma completa por financiación pública."}},
+  {n:15, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la cartera común suplementaria del Sistema Nacional de Salud incluirá las siguientes prestaciones:", opts:{A:"Únicamente la prestación farmacéutica.",B:"Únicamente la prestación ortoprotésica.",C:"Únicamente la prestación farmacéutica y la prestación ortoprotésica.",D:"La prestación farmacéutica, la prestación ortoprotésica y la prestación con productos dietéticos."}},
+  {n:16, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la prestación de atención primaria no comprenderá:", opts:{A:"La atención a la salud bucodental.",B:"La atención paliativa a personas enfermas terminales.",C:"La rehabilitación básica.",D:"Ninguna de las respuestas anteriores es correcta."}},
+  {n:17, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, para la elaboración del contenido de la cartera común de servicios del Sistema Nacional de Salud:", opts:{A:"Es preceptivo el informe favorable de la Red Española de Agencias de Evaluación de Tecnologías Sanitarias y Prestaciones del Sistema Nacional de Salud.",B:"Se contará con la participación de la Red Española de Agencias de Evaluación de Tecnologías Sanitarias y Prestaciones del Sistema Nacional de Salud, en la evaluación de la eficacia, eficiencia, efectividad, seguridad y utilidad terapéuticas.",C:"Es preceptivo el informe favorable de las sociedades científicas implicadas.",D:"Se contará con la participación de las sociedades científicas implicadas, en la evaluación de la eficacia, eficiencia, efectividad, seguridad y utilidad terapéuticas."}},
+  {n:18, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la exclusión de una técnica, tecnología o procedimiento actualmente incluido en la cartera de servicios se llevará a cabo cuando:", opts:{A:"Se evidencie su falta de eficacia, efectividad o eficiencia, o que el balance entre beneficio y riesgo sea significativamente desfavorable.",B:"Requiera una formación para la que no exista la especialidad médica correspondiente.",C:"Hayan cambiado las condiciones económicas de su implantación.",D:"Todas las respuestas anteriores son correctas."}},
+  {n:19, texto:"A los efectos de la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la competencia profesional es:", opts:{A:"La acreditación de formación continuada a lo largo del desempeño de su carrera profesional.",B:"La competencia acreditada por el título correspondiente acreditativo de la adquisición de conocimientos requeridos para el desempeño del puesto designado.",C:"La aptitud del personal profesional sanitario para integrar y aplicar los conocimientos, habilidades y actitudes asociados a las buenas prácticas de su profesión para resolver los problemas que se le plantean.",D:"La superación del proceso selectivo oficial convocado por la autoridad competente para la adquisición del vínculo estatutario con los servicios sanitarios."}},
+  {n:20, texto:"Según dispone la Ley 16/2003, de 28 de mayo, de cohesión y calidad del Sistema Nacional de Salud, la declaración de actuaciones coordinadas en salud pública y en seguridad alimentaria deberán encuadrarse en alguno de los supuestos siguientes:", opts:{A:"Responder a situaciones de especial riesgo o alarma para la salud pública.",B:"Establecer planes preventivos para hacer frente a situaciones de especial riesgo o alarma para la salud pública.",C:"Realizar análisis epidemiológicos que permitan establecer estructuras y recursos según las previsiones en materia de salud pública y seguridad alimentaria.",D:"Las respuestas a) y b) son verdaderas y la c) es falsa."}},
+  {n:21, texto:"Según dispone la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, la ordenación del régimen personal estatutario de los servicios de salud se rige por una serie de principios y criterios. Señale cuales no están entre los mencionados por esta ley.", opts:{A:"Sometimiento pleno a la ley y el derecho.",B:"Igualdad, mérito, capacidad y promoción en el acceso a la condición de personal estatutario.",C:"Integración en el régimen organizativo y funcional del servicio de salud y de sus centros e instituciones.",D:"Coordinación, cooperación y mutua información entre las Administraciones sanitarias públicas."}},
+  {n:22, texto:"La condición de personal estatutario fijo se adquiere, tal y como prevé la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, por el cumplimiento de los siguientes requisitos:", opts:{A:"Incorporación a una plaza de servicio, institución o centro que corresponda en el plazo fijado en la convocatoria tras la superación de las pruebas de selección.",B:"Superación de las pruebas de selección; nombramiento conferido por el órgano competente; e incorporación a una plaza del servicio, institución o centro que corresponda en el plazo de un mes.",C:"Superación de las pruebas de selección; nombramiento conferido por el órgano competente; e incorporación, previo cumplimiento de los requisitos formales en cada caso establecidos, a una plaza del servicio, institución o centro que corresponda en el plazo determinado en la convocatoria.",D:"Superación de las pruebas de selección; nombramiento conferido por el órgano competente; e incorporación a una plaza del servicio, institución o centro que corresponda en todo caso en el plazo determinado en la convocatoria."}},
+  {n:23, texto:"Según dice la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, en el proceso de la adquisición de la condición de personal estatutario fijo, no podrán recibir nombramiento y quedarán sin efecto las actuaciones de quienes:", opts:{A:"No acrediten que reúnen los requisitos y condiciones exigidos en la convocatoria, una vez superado el proceso selectivo.",B:"No acrediten que reúnen los requisitos y condiciones exigidos en la convocatoria, con carácter previo a la superación del proceso selectivo.",C:"No acrediten que reúnen los requisitos y condiciones exigidos en la convocatoria, una vez firmada la convocatoria.",D:"Una vez superado el proceso selectivo, automáticamente se procede al nombramiento por el órgano competente."}},
+  {n:24, texto:"La pérdida de la condición de personal estatutario regulada en la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, se produce:", opts:{A:"Siempre en caso de pena de inhabilitación especial para empleo o cargo público, afecte o no al correspondiente nombramiento.",B:"En caso de que se adopte la pena de inhabilitación absoluta sea firme o no.",C:"En caso de que se adopte la pena de inhabilitación especial para la correspondiente profesión, siempre que esta exceda de seis años.",D:"En caso de que se adopte la pena de inhabilitación especial para la correspondiente profesión, siempre que esta exceda de tres años."}},
+  {n:25, texto:"Conforme a la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, señale cuál de las siguientes afirmaciones no es correcta:", opts:{A:"La jubilación puede ser forzosa o voluntaria.",B:"Para que la persona interesada pueda prolongar su permanencia en servicio activo hasta cumplir los 70 años, bastará con que lo solicite voluntariamente.",C:"La jubilación forzosa se declarará al cumplir la persona interesada 65 años.",D:"Podrá optar a la jubilación voluntaria, total o parcial, el personal estatutario que reúna los requisitos establecidos en la legislación de Seguridad Social."}},
+  {n:26, texto:"Procede la extinción de la condición de personal estatutario fijo de los servicios de salud:", opts:{A:"Cuando se produzca la pérdida de la nacionalidad.",B:"En caso de recaer sanción firme disciplinaria de separación del servicio.",C:"Siempre que se imponga una pena principal o accesoria de inhabilitación especial para empleo o cargo público o para el ejercicio de la correspondiente profesión.",D:"Todas las anteriores respuestas son correctas."}},
+  {n:27, texto:"En materia de retribuciones, la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, prevé que:", opts:{A:"El sistema retributivo del personal estatutario se estructura en retribuciones básicas y retribuciones complementarias.",B:"La evaluación del personal estatutario a efectos de determinación de una parte de la retribuciones complementarias se establecerá a través de procedimientos fundados en los principios igualdad, objetividad y transparencia.",C:"El sistema retributivo del personal estatutario responde a los principios de cualificación técnica y profesional.",D:"Todas las respuestas son correctas."}},
+  {n:28, texto:"De acuerdo con la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud, señale la respuesta correcta respecto a las retribuciones del personal estatutario de los servicios de salud:", opts:{A:"Las retribuciones básicas son: el sueldo asignado a cada categoría en función del título exigido para su desempeño; los trienios; y las pagas extraordinarias.",B:"Las retribuciones básicas serán iguales en todos los servicios de salud independientemente de la anualidad en la que se perciban.",C:"El personal estatutario temporal percibirá la totalidad de las retribuciones que, en el correspondiente servicio de salud, correspondan a su nombramiento, con excepción del complemento de carrera.",D:"El complemento de atención continuada está destinado a retribuir la iniciativa continuada y permanente de la persona titular del puesto."}},
+  {n:29, texto:"La pérdida de la condición de personal estatutario de los servicios de salud se produce cuando la incapacidad permanente sea declarada:", opts:{A:"En grado de incapacidad permanente total para la profesión habitual.",B:"En grado de incapacidad absoluta para todo trabajo.",C:"En grado de gran invalidez.",D:"Todas las respuestas son correctas."}},
+  {n:30, texto:"En el supuesto del personal estatutario de los servicios de salud:", opts:{A:"El período de localización es aquel período de tiempo en el que el personal se encuentra únicamente en situación de disponibilidad.",B:"Se considera período de descanso todo período de tiempo que no sea tiempo de trabajo.",C:"El trabajo por turnos es una forma de organización del trabajo en equipo con arreglo al ritmo rotatorio y siempre de tipo continuo.",D:"El período de localización es aquel período de tiempo en el que el personal se encuentra en situación de disponibilidad a los solos efectos de asegurar su posible localización."}},
+  {n:31, texto:"Para el personal estatutario de los servicios de salud, el período nocturno tendrá la siguiente duración:", opts:{A:"Mínima de siete horas e incluirá necesariamente el período comprendido entre las cero y las cinco horas de cada día natural.",B:"Mínima de ocho horas e incluirá necesariamente el período comprendido entre las cero y las cinco horas de cada día natural.",C:"Mínima de ocho horas e incluirá necesariamente el período comprendido entre las doce y las cinco horas de cada día natural.",D:"Mínima de siete horas e incluirá necesariamente el período comprendido entre las doce y las cinco horas de cada día natural."}},
+  {n:32, texto:"Según establece la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud:", opts:{A:"Resulta incompatible para el personal estatutario de los servicios de salud el ejercicio de las funciones sanitarias con cualquier otro tipo de funciones.",B:"Al personal estatutario de los servicios de salud le resulta aplicable el mismo régimen de incompatibilidades establecido para el personal funcionario.",C:"Atendiendo a lo que establezca la legislación vigente, el personal estatutario de los servicios de salud podrá compatibilizar las funciones sanitarias y docente.",D:"Para el personal licenciado sanitario el complemento específico resulta irrenunciable."}},
+  {n:33, texto:"La Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud regula el descanso semanal. Señale la respuesta que no es correcta:", opts:{A:"El personal tendrá derecho a un período mínimo que siempre será fijo de descanso ininterrumpido con una duración media de 24 horas semanales.",B:"El período de referencia para el cálculo del período de descanso semanal será de tres meses.",C:"En el caso de que no se hubiera disfrutado del tiempo mínimo de descanso semanal en el período de tres meses se producirá una compensación a través del régimen de descansos alternativos.",D:"El período de referencia para el cálculo del período de descanso semanal será de dos meses."}},
+  {n:34, texto:"Conforme a la Ley 55/2003, de 16 de diciembre, del Estatuto Marco del personal estatutario de los servicios de salud:", opts:{A:"El personal tendrá derecho a una vacación retribuida cuya duración no será inferior en ningún caso a 30 días naturales.",B:"El personal estatutario de los servicios de salud podrá elegir sustituir el período de vacación por una compensación económica.",C:"Solo podrá ser sustituido por una compensación económica el período vacacional anual mediante la programación funcional de los centros, cuando así lo aconsejen razones organizativas.",D:"Anualmente, el personal tendrá derecho a una vacación retribuida cuya duración no será inferior a 30 días naturales, o al tiempo que proporcionalmente corresponda en función del tiempo de servicios."}},
+  {n:35, texto:"La excedencia voluntaria solicitada por el personal estatutario de los servicios de salud por interés particular exige haber prestado servicios efectivos en cualquiera de las Administraciones públicas durante:", opts:{A:"Los cinco años inmediatamente anteriores.",B:"Los cuatro años inmediatamente anteriores.",C:"Los dos años inmediatamente anteriores.",D:"Los tres años inmediatamente anteriores."}},
+  {n:36, texto:"La Ley 8/1997, de 26 de junio, de ordenación Sanitaria de Euskadi, establece que la Administración sanitaria vasca debe garantizar la tutela general de la salud pública a través de:", opts:{A:"Medidas preventivas.",B:"Promoción de la salud.",C:"Prestaciones sanitarias individuales.",D:"Son correctas todas las respuestas."}},
+  {n:37, texto:"La Ley 8/1997, de 26 de junio, de ordenación Sanitaria de Euskadi, reconoce la universalidad del derecho a la protección de la salud para:", opts:{A:"Todas las personas residentes en el territorio de Euskadi, así como para las personas transeúntes.",B:"Todas las personas residentes en Euskadi o fuera de Euskadi, así como para las personas transeúntes.",C:"Solo para las personas que tengan vecindad administrativa en Euskadi.",D:"Solo para las personas de quienes pueda predicarse la condición política de vascos."}},
+  {n:38, texto:"Señale cuál de los siguientes principios no se enuncian entre los principios informadores del sistema sanitario de Euskadi en la Ley 8/1997, de 26 de junio, de ordenación Sanitaria de Euskadi:", opts:{A:"Universalidad.",B:"Solidaridad ciudadana.",C:"Equidad.",D:"Calidad de los servicios."}},
+  {n:39, texto:"La Ley 8/1997, de 26 de junio, de ordenación Sanitaria de Euskadi, establece respecto a las áreas de salud que:", opts:{A:"La Comunidad Autónoma del País Vasco se divide territorialmente en áreas de salud de acuerdo con la situación socio-económica de cada demarcación geográfica.",B:"En cada área de salud pueden ponerse en práctica las actuaciones esenciales que requiere la tutela general de la salud pública y exclusivamente la asistencia sanitaria primaria.",C:"En cada área de salud se garantizará una adecuada ordenación de la atención primaria y su coordinación con la atención especializada.",D:"Son correctas la a) y la c)."}},
+  {n:40, texto:"La Ley 8/1997, de 26 de junio, de ordenación Sanitaria de Euskadi prevé la creación de sistemas de información necesarios para facilitar el ejercicio adecuado de los distintos niveles de responsabilidad en el sistema. A tal fin, los datos de carácter personal relativos a la salud podrán ser recabados y tratados siempre que se cumplan los siguientes requisitos:", opts:{A:"Siempre debe constar el previo consentimiento de la persona afectada.",B:"Si no consta el previo consentimiento de la persona afectada se requiere que la actuación se encuentre debidamente autorizada y se efectúe previo procedimiento de disociación que garantice el anonimato de la información.",C:"Que conste el previo consentimiento de la persona afectada por escrito y que se garantice el anonimato de la información.",D:"Basta con que la actuación se encuentre debidamente autorizada."}},
+  {n:41, texto:"La Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi al contemplar los derechos y deberes ciudadanos, alude a:", opts:{A:"La obligación de dejar constancia escrita de todo proceso diagnóstico o terapéutico.",B:"La obligación de dejar constancia por cualquier medio de todo proceso diagnóstico.",C:"La obligación de dejar constancia por cualquier medio de todo proceso diagnóstico o terapéutico.",D:"No existe en la Ley ninguna previsión a este respecto, de modo que será el personal facultativo el que decida si el proceso diagnóstico o terapéutico debe quedar registrado."}},
+  {n:42, texto:"El contrato-programa, tal y como establece la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi:", opts:{A:"Es el instrumento jurídico mediante el que se articulan las relaciones entre el Gobierno Vasco y las organizaciones del ente público Osakidetza-Servicio Vasco de Salud para la provisión de servicios sanitarios.",B:"Es el instrumento jurídico mediante el que se articulan de manera directa las relaciones entre el Departamento competente en materia de sanidad y las organizaciones del ente público Osakidetza-Servicio Vasco de Salud que tiene naturaleza jurídica de concierto.",C:"Es el instrumento jurídico mediante el que se articulan de manera directa las relaciones entre el Departamento competente en materia de sanidad y las organizaciones del ente público Osakidetza-Servicio Vasco de Salud que tiene naturaleza jurídica de un convenio de carácter especial.",D:"Ninguna respuesta es correcta."}},
+  {n:43, texto:"El consejo de administración de Osakidetza-Servicio Vasco de Salud está integrado por:", opts:{A:"La persona titular de la presidencia y por un número no superior a cinco miembros en representación de la Administración de la Comunidad Autónoma de Euskadi.",B:"La persona titular de la presidencia y por un número no superior a tres miembros en representación de la Administración de la Comunidad Autónoma de Euskadi.",C:"La persona titular de la presidencia y por cinco miembros en representación del Departamento competente en materia de sanidad.",D:"La persona titular de la presidencia, la Consejería del Departamento competente en materia de sanidad y tres miembros en representación de la Administración de la Comunidad Autónoma de Euskadi."}},
+  {n:44, texto:"Según establece la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi:", opts:{A:"El Plan de Salud de Euskadi debe ser aprobado por el Parlamento Vasco.",B:"El Departamento competente en materia de sanidad debe elaborar semestralmente y remitir al Parlamento un informe con la evaluación de los objetivos y determinaciones del Plan de Salud de Euskadi.",C:"El Departamento competente en materia de sanidad debe elaborar anualmente y remitir al Parlamento un informe con la evaluación de los objetivos y determinaciones del Plan de Salud de Euskadi.",D:"Son correctas las respuestas a) y c)."}},
+  {n:45, texto:"A los efectos de la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi, las plantillas de personal del ente público Osakidetza-Servicio Vasco de Salud:", opts:{A:"Serán aprobadas por la Presidencia a propuesta del consejo de administración.",B:"Se denomina así al número de efectivos de carácter estructural con que cuentan tanto su organización central de administración como las organizaciones de servicios dependientes de Osakidetza-Servicio Vasco de Salud.",C:"Deberán ajustarse al número máximo de efectivos, según grupos profesionales, que anualmente aprobará su consejo de administración a propuesta del Departamento de Sanidad.",D:"Deberán ajustarse al número máximo de efectivos, según grupos de titulación, que anualmente aprobará el Departamento de Sanidad."}},
+  {n:46, texto:"En el ámbito territorial de la Comunidad Autónoma de Euskadi, las inspecciones necesarias para asegurar el cumplimiento de lo previsto en la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi y en el resto de la legislación sanitaria corresponde:", opts:{A:"A la inspección de trabajo del País Vasco adscrita al Departamento de trabajo y empleo del Gobierno Vasco.",B:"En todos los casos a las corporaciones locales de la Comunidad Autónoma.",C:"Al Departamento competente en materia de sanidad.",D:"La inspección en materia sanitaria no es competencia de la Comunidad Autónoma de Euskadi."}},
+  {n:47, texto:"Señale cuál de los siguientes criterios no está contemplado en la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi para la clasificación de las infracciones en leves, graves o muy graves:", opts:{A:"La cuantía de la indemnización solicitada.",B:"Los riesgos para la salud.",C:"El grado de intencionalidad.",D:"La gravedad de la alteración sanitaria y social producida."}},
+  {n:48, texto:"Según establece la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi, en materia de sanciones señale la respuesta correcta:", opts:{A:"Las infracciones serán sancionadas exclusivamente con sanción pecuniaria o económica.",B:"En los casos de infracciones muy graves, el Gobierno Vasco podrá acordar el cierre temporal del establecimiento, instalación o servicio por un plazo máximo de cinco años.",C:"Sin perjuicio de la multa que proceda imponer, en ciertos casos, la sanción económica que se imponga podrá ser incrementada hasta el triple de la cuantía del beneficio ilícito obtenido.",D:"En los casos de infracciones muy graves, el Gobierno Vasco podrá acordar el cierre temporal del establecimiento, instalación o servicio por un plazo máximo de tres años."}},
+  {n:49, texto:"Según la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi, las organizaciones a través de las que se procede a la provisión de servicios sanitarios con medios adscritos al ente público Osakidetza-Servicio Vasco de Salud:", opts:{A:"Realizarán su actividad bajo el principio de autonomía económico-financiera y de gestión.",B:"Se configurarán como instituciones de titularidad privada y con personalidad jurídica propia.",C:"Se crearán por ley como entidades de titularidad pública y con personalidad jurídica propia.",D:"Para realizar su actividad dependen presupuestariamente del ente público Osakidetza-Servicio Vasco de Salud."}},
+  {n:50, texto:"Respecto al personal sujeto al régimen estatutario que establece la Ley 8/1997, de 26 de junio, de Ordenación Sanitaria de Euskadi, señale la respuesta correcta:", opts:{A:"Este vínculo estatutario se adquiere mediante el cumplimiento de los dos siguientes requisitos: superación del proceso selectivo correspondiente y nombramiento conferido por autoridad competente.",B:"Los principios que rigen el procedimiento selectivo para la adquisición del vínculo estatutario son exclusivamente el de igualdad, mérito y capacidad.",C:"Los instrumentos de clasificación del personal sujeto a este régimen estatutario son el grupo de titulación, el grupo profesional, la categoría y el puesto funcional que se desempeñe.",D:"El grupo de titulación constituye el instrumento de clasificación del personal en base al agrupamiento unitario de las aptitudes profesionales y contenido específico da las tareas propias de la prestación."}}
+];
+
+let estado = {};
+let orden = PREGUNTAS.map(p => p.n);
+let modoFallos = false;
+
+function cargarEstado() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) estado = JSON.parse(raw);
+  } catch(e) { estado = {}; }
+}
+
+function guardarEstado() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(estado)); } catch(e) {}
+}
+
+function calcularStats() {
+  let ok = 0, fail = 0;
+  PREGUNTAS.forEach(p => {
+    if (estado[p.n]) {
+      if (estado[p.n].correcto) ok++;
+      else fail++;
+    }
+  });
+  return { ok, fail, total: PREGUNTAS.length };
+}
+
+function actualizarHeader() {
+  const s = calcularStats();
+  const respondidas = s.ok + s.fail;
+  document.getElementById('barraFill').style.width = (respondidas / s.total * 100) + '%';
+  document.getElementById('progresoTexto').textContent = respondidas + ' / ' + s.total;
+  document.getElementById('statOk').textContent = s.ok + ' correctas';
+  document.getElementById('statFail').textContent = s.fail + ' incorrectas';
+}
+
+function renderizar() {
+  const c = document.getElementById('contenedor');
+  c.innerHTML = '';
+
+  const s = calcularStats();
+  if (s.ok + s.fail === s.total && !modoFallos) {
+    const pct = Math.round(s.ok / s.total * 100);
+    const banner = document.createElement('div');
+    banner.className = 'banner-completado';
+    banner.innerHTML = `<h2>🎉 ¡Lote completado!</h2><div class="puntuacion">${s.ok}/${s.total}</div><p>${pct}% de acierto · Preguntas 1–50</p>`;
+    c.appendChild(banner);
+  }
+
+  const preguntasMostrar = modoFallos
+    ? PREGUNTAS.filter(p => estado[p.n] && !estado[p.n].correcto)
+    : orden.map(n => PREGUNTAS.find(p => p.n === n));
+
+  if (modoFallos && preguntasMostrar.length === 0) {
+    c.innerHTML += '<div style="text-align:center;padding:40px;color:var(--gris);font-family:Syne,sans-serif;">¡No hay preguntas falladas! 🎯</div>';
+    return;
+  }
+
+  preguntasMostrar.forEach(pregunta => {
+    if (!pregunta) return;
+    const resp = RESPUESTAS[pregunta.n];
+    const est = estado[pregunta.n];
+    const resuelta = !!est;
+
+    const card = document.createElement('div');
+    card.className = 'pregunta-card' + (resuelta ? (' resuelta' + (est.correcto ? '' : ' fallo')) : '');
+    card.id = 'p' + pregunta.n;
+
+    let html = `<div class="pregunta-num">Pregunta ${pregunta.n}</div>`;
+    html += `<div class="pregunta-texto">${pregunta.n}.- ${pregunta.texto}</div>`;
+    html += `<div class="opciones">`;
+
+    Object.entries(pregunta.opts).forEach(([letra, texto]) => {
+      let cls = 'opcion-btn';
+      let disabled = resuelta ? 'disabled' : '';
+
+      if (resuelta) {
+        if (letra === resp) {
+          cls += est.elegida === letra ? ' correcta' : ' correcta-marcada';
+        } else if (letra === est.elegida && !est.correcto) {
+          cls += ' incorrecta';
+        }
+      }
+
+      html += `<button class="${cls}" ${disabled} onclick="responder(${pregunta.n}, '${letra}')">
+        <span class="letra">${letra})</span>${texto}
+      </button>`;
+    });
+
+    html += `</div>`;
+
+    if (resuelta) {
+      const badge = est.correcto
+        ? `<div class="resultado-badge badge-ok">✓ Correcto</div>`
+        : `<div class="resultado-badge badge-error">✗ Incorrecto — Respuesta: ${resp}</div>`;
+      html += badge;
+    }
+
+    if (resp === 'NULA') {
+      html += `<div class="pregunta-nula">⚠ Esta pregunta fue declarada NULA en el cuadro de respuestas oficial.</div>`;
+    }
+
+    card.innerHTML = html;
+    c.appendChild(card);
+  });
+}
+
+function responder(num, letra) {
+  if (estado[num]) return;
+  const resp = RESPUESTAS[num];
+  estado[num] = { elegida: letra, correcto: letra === resp };
+  guardarEstado();
+  actualizarHeader();
+  renderizar();
+  setTimeout(() => {
+    const el = document.getElementById('p' + num);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+function resetearTodo() {
+  if (!confirm('¿Seguro que quieres reiniciar todo el progreso de este lote?')) return;
+  estado = {};
+  guardarEstado();
+  modoFallos = false;
+  orden = PREGUNTAS.map(p => p.n);
+  actualizarHeader();
+  renderizar();
+}
+
+function mostrarSoloFallos() {
+  modoFallos = !modoFallos;
+  renderizar();
+}
+
+function ordenAleatorio() {
+  modoFallos = false;
+  orden = [...PREGUNTAS.map(p => p.n)].sort(() => Math.random() - 0.5);
+  renderizar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+cargarEstado();
+actualizarHeader();
+renderizar();
+</script>
+</body>
+</html>
