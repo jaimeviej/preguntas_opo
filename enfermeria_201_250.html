@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osakidetza OPE — Enfermería 201-250</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+:root{
+  --primario:#1a5c7a;--primario-claro:#2980b9;--fondo:#f0f8fa;--fondo-suave:#e8f4f8;
+  --blanco:#ffffff;--gris:#6b7b8d;--borde:#dde4e0;
+  --correcto:#1a7a5e;--incorrecto:#b83232;
+  --correcto-bg:#e6f7f1;--incorrecto-bg:#fdecea;
+  --sombra:0 4px 24px rgba(0,0,0,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--fondo);color:#1a1a2e;min-height:100vh;padding-bottom:60px;}
+header{background:var(--primario);color:white;padding:28px 24px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.15);}
+header h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.02em;line-height:1.2;}
+header .subtitulo{font-size:0.8rem;opacity:0.8;margin-top:2px;font-weight:300;}
+.barra-progreso-wrap{margin-top:12px;display:flex;align-items:center;gap:10px;}
+.barra-progreso{flex:1;height:6px;background:rgba(255,255,255,0.25);border-radius:10px;overflow:hidden;}
+.barra-progreso-fill{height:100%;background:rgba(255,255,255,0.7);border-radius:10px;transition:width 0.4s ease;}
+.progreso-texto{font-size:0.75rem;opacity:0.85;white-space:nowrap;}
+.stats-header{display:flex;gap:16px;margin-top:10px;font-size:0.75rem;}
+.stat-item{display:flex;align-items:center;gap:5px;opacity:0.9;}
+.stat-dot{width:8px;height:8px;border-radius:50%;}
+.dot-correcto{background:rgba(255,255,255,0.8);}
+.dot-incorrecto{background:#ff8a80;}
+.contenedor{max-width:780px;margin:0 auto;padding:24px 16px;}
+.pregunta-card{background:var(--blanco);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:var(--sombra);border:1px solid var(--borde);}
+.pregunta-card.resuelta{border-left:4px solid var(--primario-claro);}
+.pregunta-card.resuelta.fallo{border-left:4px solid var(--incorrecto);}
+.pregunta-num{font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;color:var(--primario);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.pregunta-texto{font-size:0.95rem;font-weight:500;line-height:1.55;margin-bottom:18px;color:#1a1a2e;}
+.opciones{display:flex;flex-direction:column;gap:8px;}
+.opcion-btn{text-align:left;background:var(--fondo);border:1.5px solid var(--borde);border-radius:10px;padding:11px 14px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1a1a2e;cursor:pointer;transition:all 0.18s;line-height:1.45;}
+.opcion-btn:hover:not(:disabled){border-color:var(--primario);background:var(--fondo-suave);transform:translateX(2px);}
+.opcion-btn:disabled{cursor:default;}
+.opcion-btn .letra{font-weight:700;color:var(--gris);margin-right:6px;font-family:'Syne',sans-serif;font-size:0.82rem;}
+.opcion-btn.correcta{background:var(--correcto-bg);border-color:var(--correcto);color:var(--correcto);font-weight:500;}
+.opcion-btn.correcta .letra{color:var(--correcto);}
+.opcion-btn.incorrecta{background:var(--incorrecto-bg);border-color:var(--incorrecto);color:var(--incorrecto);font-weight:500;}
+.opcion-btn.incorrecta .letra{color:var(--incorrecto);}
+.opcion-btn.correcta-marcada{background:var(--correcto-bg);border-color:var(--correcto);color:var(--correcto);font-weight:600;}
+.resultado-badge{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:5px 11px;border-radius:20px;font-size:0.78rem;font-weight:600;font-family:'Syne',sans-serif;}
+.badge-ok{background:var(--correcto-bg);color:var(--correcto);}
+.badge-error{background:var(--incorrecto-bg);color:var(--incorrecto);}
+.botones-footer{position:fixed;bottom:0;left:0;right:0;background:var(--blanco);border-top:1px solid var(--borde);padding:12px 16px;display:flex;gap:10px;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,0.07);z-index:99;}
+.btn-accion{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;transition:all 0.18s;}
+.btn-resetear{background:var(--fondo);color:var(--gris);border:1.5px solid var(--borde);}
+.btn-resetear:hover{background:var(--incorrecto-bg);border-color:var(--incorrecto);color:var(--incorrecto);}
+.btn-fallos{background:var(--fondo);color:var(--primario);border:1.5px solid var(--borde);}
+.btn-fallos:hover{background:var(--fondo-suave);}
+.btn-aleatorio{background:var(--primario);color:white;}
+.btn-aleatorio:hover{background:var(--primario-claro);}
+.banner-completado{background:linear-gradient(135deg,var(--primario) 0%,var(--primario-claro) 100%);color:white;border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:24px;box-shadow:var(--sombra);}
+.banner-completado h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+.banner-completado .puntuacion{font-size:2.5rem;font-weight:800;font-family:'Syne',sans-serif;margin:8px 0;}
+.banner-completado p{opacity:0.9;font-size:0.88rem;}
+@media(max-width:500px){.pregunta-texto{font-size:0.88rem;}.opcion-btn{font-size:0.82rem;padding:10px 12px;}header h1{font-size:1.1rem;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🩺 Enfermería OPE — Preguntas 201 a 250</h1>
+  <div class="subtitulo">Batería específica Enfermería · OPE 23-24-25</div>
+  <div class="barra-progreso-wrap">
+    <div class="barra-progreso"><div class="barra-progreso-fill" id="barraFill" style="width:0%"></div></div>
+    <span class="progreso-texto" id="progresoTexto">0 / 50</span>
+  </div>
+  <div class="stats-header">
+    <div class="stat-item"><span class="stat-dot dot-correcto"></span><span id="statOk">0 correctas</span></div>
+    <div class="stat-item"><span class="stat-dot dot-incorrecto"></span><span id="statFail">0 incorrectas</span></div>
+  </div>
+</header>
+<div class="contenedor" id="contenedor"></div>
+<div class="botones-footer">
+  <button class="btn-accion btn-resetear" onclick="resetearTodo()">↺ Reiniciar</button>
+  <button class="btn-accion btn-fallos" onclick="mostrarSoloFallos()">⚠ Solo fallos</button>
+  <button class="btn-accion btn-aleatorio" onclick="ordenAleatorio()">🔀 Aleatorio</button>
+</div>
+<script>
+const STORAGE_KEY='enfermeria_q201_250';
+const RESPUESTAS={201:'D',202:'A',203:'D',204:'A',205:'D',206:'B',207:'B',208:'C',209:'D',210:'B',211:'B',212:'D',213:'C',214:'D',215:'A',216:'B',217:'A',218:'A',219:'B',220:'C',221:'D',222:'D',223:'B',224:'B',225:'D',226:'C',227:'B',228:'C',229:'A',230:'B',231:'B',232:'C',233:'D',234:'C',235:'B',236:'C',237:'C',238:'B',239:'D',240:'B',241:'C',242:'D',243:'A',244:'C',245:'D',246:'A',247:'B',248:'D',249:'B',250:'A'};
+const PREGUNTAS=[{n:201,texto:`La estomatitis asociada a quimioterapia requiere:`,opts:{'A':`Cepillado agresivo.`,'B':`Enjuagues alcohólicos.`,'C':`Ayuno prolongado.`,'D':`Exploración bucal diaria.`}},
+{n:202,texto:`¿Qué complicación trombótica es frecuente en pacientes oncológicos?`,opts:{'A':`Tromboembolia venosa.`,'B':`Trombocitosis.`,'C':`Hemofilia adquirida.`,'D':`Púrpura trombótica.`}},
+{n:203,texto:`Un objetivo clave de enfermería en radioterapia es:`,opts:{'A':`Evitar toda actividad física.`,'B':`Aplicar cremas alcohólicas.`,'C':`Regular la exposición solar.`,'D':`Cuidar de la piel irradiada.`}},
+{n:204,texto:`La ropa contaminada con citostáticos debe:`,opts:{'A':`Colocarse en contenedores específicos.`,'B':`Reutilizarse tras lavado.`,'C':`Desecharse como residuo común.`,'D':`Lavarse en casa.`}},
+{n:205,texto:`Es una característica de las neoplasias malignas:`,opts:{'A':`Presenta células bien diferenciadas, parecidas a las células normales del tejido del que se originó el tumor.`,'B':`El tumor crece por expansión y no infiltra los tejidos circundantes.`,'C':`Su velocidad de crecimiento es, casi siempre, lenta.`,'D':`Crece en la periferia y emite prolongaciones que infiltran e invaden los tejidos circundantes.`}},
+{n:206,texto:`Señala el cáncer con influencia genética de carácter autosómico recesivo:`,opts:{'A':`Síndrome de Cowden.`,'B':`Síndrome de Lynch (cáncer de colon hereditario sin poliposis).`,'C':`Síndrome de melanoma familiar.`,'D':`Síndrome de Li-Fraumeni.`}},
+{n:207,texto:`Los interferones, son:`,opts:{'A':`Citocinas producidas por subconjuntos de linfocitos T,células citolíticas naturales y células dendríticas.`,'B':`Citocinas con propiedades antivíricas, antitumorales e inmunomoduladoras (inhibición o estimulación del sistema inmunitario).`,'C':`Sustancia que causa inflamación, daño y necrosis tisulares cuando se extravasa y hay contacto con los tejidos.`,'D':`Sustancias que contienen porciones de células malignas, solas o combinadas.`}},
+{n:208,texto:`¿Qué EPI es correcto al manipular citostáticos?`,opts:{'A':`Doble guante específico para quimioterapia.`,'B':`Doble guante estéril quirúrgico.`,'C':`Doble guante de nitrilo.`,'D':`Doble guante de poliisopreno.`}},
+{n:209,texto:`En los cuidados al final de la vida, existen ciertas claves que nos permiten escuchar de forma eficaz: SEÑALE LA INCORRECTA.`,opts:{'A':`Evitar las respuestas estereotípicas, como “sé cómo se siente”.`,'B':`Hacer preguntas.`,'C':`Alentar con gentileza: “¿Necesitan más tiempo para pensarlo?”.`,'D':`Rellenar con cualquier charla el “espacio vacío” en la comunicación.`}},
+{n:210,texto:`El acrónimo COMFORT sirve de marco para la comunicación en cuidados paliativos, sus letras se refieren a:`,opts:{'A':`Comunicación, Orientacion, Convencerse,Familia,Oportunidades,Relacionarse y Trabajo en equipo.`,'B':`Comunicación, Orientacion, Consciencia,Familia,Oportunidades,Relacionarse y Trabajo en equipo.`,'C':`Comunicación, Orientacion,Convencerse,Familia,Oportunidades,Relajarse y Trabajo en equipo.`,'D':`Comunicación, Orientacion, Consciencia,Familia,Oportunidades,Relacionarse y Terapia farmacológica.`}},
+{n:211,texto:`¿Cuál sería una respuesta adecuada ante una persona en situación grave que pregunta al personal de enfermería sobre si se está muriendo?`,opts:{'A':`En esta situación, está permitido dar respuestas inútiles que desacrediten las preocupaciones reales del enfermo o releguen el problema a otro profesional de la salud mejor preparado.`,'B':`Se escucha con atención, se hacen preguntas adicionales de aclaración y se tranquiliza al enfermo sólo cuando él sea realista.`,'C':`Se debe establecer una declaración o pregunta cerrada (“¿Piensa usted en la muerte?”).`,'D':`Se debe evitar el contacto visual, favoreciendo el contacto físico y comenzar con una declaración que reconozca los temores del paciente.`}},
+{n:212,texto:`Son signos de muerte próxima:`,opts:{'A':`La visión y la audición pueden estar disminuidos y el habla puede ser difícil de comprender.`,'B':`Es posible que las secreciones se acumulen en la parte posterior de la garganta y se escuche un borboteo cuando el paciente respira por la boca.`,'C':`La respiración puede volverse irregular, con períodos sin respiración (apnea).`,'D':`a),b) y c) son correctas.`}},
+{n:213,texto:`¿Cuál de los siguientes es un fármaco de elección para el exceso de secreciones bucales y respiratorias cuando la muerte es inminente?`,opts:{'A':`Adrenalina.`,'B':`Salbutamol.`,'C':`Escopolamina.`,'D':`Bromuro de ipratropio.`}},
+{n:214,texto:`¿Cuál de las siguientes expresiones asocia a la etapa de Negociación del duelo de Kübler-Ross?`,opts:{'A':`“No sé cómo se las van a arreglar mis hijos cuando yo no esté”.`,'B':`“He tenido una buena vida y no lamento nada”.`,'C':`“Esto no puede ser cierto”.`,'D':`“Sólo quiero ver el nacimiento de mi nieto, entonces voy a estar listo...”.`}},
+{n:215,texto:`El dolor como consecuencia del cáncer relacionado con órganos es:`,opts:{'A':`Dolor visceral.`,'B':`Dolor neuropatica.`,'C':`Dolor somático.`,'D':`Dolor simpático.`}},
+{n:216,texto:`La Escala visual del dolor revisada:`,opts:{'A':`Utiliza diferentes palabras o frases para describir la intensidad del dolor, como “sin dolor, leve, moderado, grave, muy intenso y el peor posible”.`,'B':`Tiene seis rostros para que sea congruente con otras escalas que emplean la métrica de 0 a 10. Los rostros van desde una expresión facial neutra a una de dolor intenso y están numeradas con 0, 2, 4, 6, 8 y 10.`,'C':`Consiste en una línea horizontal (a veces vertical) de 10 cm con referencias de palabras en los extremos, como “sin dolor” en un extremo y “dolor tan grave como sea posible” o “peor dolor posible” en el otro extremo.`,'D':`Consta de seis caras de dibujos con descriptores por escrito, que van desde un rostro sonriente a la derecha para “sin dolor” a un rostro con ceño fruncido lloroso a la izquierda para “el peor dolor”.`}},
+{n:217,texto:`¿Cuál de las siguientes es una característica del fentanilo?`,opts:{'A':`Produce efectos adversos hemodinámicos mínimos.`,'B':`Tiene un inicio lento pero una acción de larga duración.`,'C':`Es un opiáceo lipófobo, a diferencia de la morfina.`,'D':`Tiene un inicio rápido y una acción de larga duración.`}},
+{n:218,texto:`Entre los procesos clave del duelo que permiten a las personas adaptarse a la pérdida de manera sana NO se encuentra:`,opts:{'A':`Replicar los antiguos vínculos con la persona fallecida.`,'B':`Reaccionar a la separación, experimentar y expresar el dolor de la pérdida.`,'C':`Recordar y re experimentar al difunto, la relación y los sentimientos implicados.`,'D':`Reajustarse para adaptarse al nuevo mundo sin olvidar el antiguo.`}},
+{n:219,texto:`Durante la sedación paliativa, el personal de enfermería: SEÑALE LA INCORRECTA.`,opts:{'A':`Brinda apoyo emocional al paciente y su familia.`,'B':`Decide el momento de inicio del tratamiento farmacológico.`,'C':`Ofrece atención física centrada en el bienestar.`,'D':`Actúa como colaborador del equipo interdisciplinar.`}},
+{n:220,texto:`La atención paliativa, como concepto más amplio que el de cuidados paliativos, es una estrategia de atención que pretende:`,opts:{'A':`La prevención y el alivio del sufrimiento, intervienen y alivian el dolor, trabajar con los temas sobre la muerte y duelo, crear vínculos espirituales y psicológicos para la familia y el paciente.`,'B':`Ayudar a las personas con enfermedades graves a sentirse mejor al prevenir o tratar los síntomas y efectos secundarios de la enfermedad y el tratamiento.`,'C':`Prevenir y aliviar el sufrimiento y mantener lo mejor posible la calidad de vida delos pacientes y sus familias, cualquiera que sea la etapa de la enfermedad o la necesidad de otros tratamientos.`,'D':`Un enfoque que mejora la calidad de vida de pacientes y familias que se enfrentan a los problemas asociados con enfermedades amenazantes para la vida, a través de la prevención y alivio del sufrimiento por medio de la identificación temprana e impecable evaluación y tratamiento del dolor y otros problemas, físicos, psicológicos y espirituales.`}},
+{n:221,texto:`Cicely Saunders, reconocida como la fundadora del movimiento hospice moderno y pionera de los cuidados paliativos a nivel mundial. Revolucionó la atención al final de la vida al fundar en 1967 el:`,opts:{'A':`Royal Trinity Hospice.`,'B':`St Andrew\'s Hospice.`,'C':`St Catherine\'s Hospice.`,'D':`St. Christopher’s Hospice.`}},
+{n:222,texto:`¿Qué significa tener un envejecimiento activo y saludable?`,opts:{'A':`Aumentar la esperanza de vida exclusivamente mediante una buena alimentación.`,'B':`Realizar actividad física diaria.`,'C':`Mantenerse libre de enfermedades que permitan que perdure la actividad laboral.`,'D':`Participar en la sociedad aprovechando las capacidades físicas, emocionales y sociales.`}},
+{n:223,texto:`¿Cuál es la recomendación general de actividad física diaria para mejorar la salud en personas mayores de 65 años?`,opts:{'A':`1 hora diaria de actividad intensa.`,'B':`30 minutos diarios de actividad física.`,'C':`1 hora diaria de ejercicio aeróbico.`,'D':`Actividad física dos veces por semana practicando algún deporte.`}},
+{n:224,texto:`La valoración social de una persona anciana requiere:`,opts:{'A':`La aplicación del índice de Katz.`,'B':`La aplicación de la escala OARS.`,'C':`La aplicación de la escala Yesavage.`,'D':`La aplicación de la escala Zarit.`}},
+{n:225,texto:`Entre los objetivos principales de la Valoración Geriátrica Integral NO encontramos:`,opts:{'A':`Establecer un diagnostico multidimensional.`,'B':`Planificar los cuidados de la mejor manera posible.`,'C':`Definir cuál es la localización más adecuada para el paciente anciano.`,'D':`Rentabilizar al máximo los recursos sanitarios.`}},
+{n:226,texto:`En las personas mayores sin patología tiroidea, la valoración de la función tiroidea se caracteriza por:`,opts:{'A':`Valores de TSH normales con T4 libre y T3 libre aumentadas.`,'B':`Valores de TSH bajos con T4 libre y T3 libre también bajos.`,'C':`Valores de TSH normales con T4 libre y T3 libre normales.`,'D':`Valores de TSH altos con T4 libre y T3 libre bajos.`}},
+{n:227,texto:`La incontinencia urinaria más común en mujeres ancianas y probablemente el tipo de incontinencia establecida más frecuente en mujeres menores de 75 años es:`,opts:{'A':`Incontinencia funcional.`,'B':`Incontinencia de esfuerzo.`,'C':`Incontinencia mixta.`,'D':`Incontinencia por hiperactividad vesical.`}},
+{n:228,texto:`Señale cuál de los siguientes, corresponde con un cambio fisiológico relacionado con el envejecimiento:`,opts:{'A':`Aumento de agua extracelular.`,'B':`Incontinencia urinaria.`,'C':`Incremento de masa grasa.`,'D':`Afección selectiva para los tonos de frecuencia baja en la audición.`}},
+{n:229,texto:`¿Cómo se interpreta una puntuación de 50 en el Índice de Barthel?`,opts:{'A':`Dependiente moderado para las actividades básicas de la vida diaria.`,'B':`Dependiente severo para las actividades básicas de la vida diaria.`,'C':`Dependiente leve para las actividades básicas de la vida diaria.`,'D':`Dependiente para las actividades instrumentales de la vida diaria.`}},
+{n:230,texto:`El Mini Mental State Examination (MMSE) utiliza la copia de un dibujo (dos pentágonos en intersección)para valorar:`,opts:{'A':`Atención y cálculo.`,'B':`Lenguaje y praxis constructiva.`,'C':`Fijación.`,'D':`Memoria.`}},
+{n:231,texto:`El CAM (Confusion Assessment Method) es un instrumento útil para el diagnóstico del delirium y evalúa cuatro criterios fundamentales. De las siguientes opciones, ¿cuál es FALSA?`,opts:{'A':`Alteración del nivel de consciencia.`,'B':`Alteración de la orientación.`,'C':`Comienzo agudo y curso fluctuante.`,'D':`Pensamiento desorganizado.`}},
+{n:232,texto:`Señale un instrumento de utilización frecuente en la valoración de la postura y la marcha en las personas mayores.`,opts:{'A':`Test de Pfeiffer.`,'B':`Escala Plutchik.`,'C':`Test de Tinneti.`,'D':`Escala de Gramorgan.`}},
+{n:233,texto:`En la Valoración funcional de la persona mayor, no debemos olvidar que la capacidad funcional no está influenciada únicamente por su estado físico, sino también por su capacidad mental y entorno social y ambiental. En este caso,¿ cuando hablamos del Grado de autonomía, nos referimos a?:`,opts:{'A':`Es la necesidad de asistencia física o verbal a través de dispositivos o terceras personas para realizar ciertos actos.`,'B':`La capacidad funcional de un individuo para realizar, por propia iniciativa y sin ayuda externa, las tareas elementales de autocuidado y funcionamiento físico necesarias para subsistir, tales como comer, vestirse, asearse, usar el baño y moverse. Implica la toma de decisiones personales sobre el propio estilo de vida y el control sobre las acciones diarias.`,'C':`El estado permanente de limitación física, psíquica o intelectual por el que una persona necesita ayuda importante o asistencia de terceros para realizar las tareas elementales de autocuidado.`,'D':`Es la capacidad de la persona de decidir por sí mismo su conducta, la orientación de sus actos y la realización de diversas actividades.`}},
+{n:234,texto:`¿Señala el grado CORRECTO que establece la Ley 39/2006 de Promoción de la Autonomía Personal y Atención a las personas en situación de dependencia?`,opts:{'A':`Dependencia moderada, la persona necesita ayuda para realizar varias actividades de la vida diaria, por lo menos dos veces al día.`,'B':`Dependencia severa, la persona precisa ayuda para realizar varias actividades de la vida cotidiana tres veces al día, pero no requiere la presencia permanente de la persona cuidadora.`,'C':`Gran dependencia, la persona precisa ayuda para realizar varias actividades básicas de la vida diaria varias veces al día, y necesita la presencia indispensable y continua de otra persona.`,'D':`Gran discapacidad, la persona eta ante una situación de incapacidad permanente absoluta que requiere la asistencia de otra persona para las necesidades básicas de la vida diaria.`}},
+{n:235,texto:`El baño del recién nacido a término sano en contexto de alta precoz:`,opts:{'A':`Debe evitarse siempre hasta pasadas 24 horas.`,'B':`Puede realizarse con seguridad tras completar la valoración al ingreso.`,'C':`Solo se permite tras retirar el pinzamiento del cordón.`,'D':`Debe realizarse fuera del área térmica (estufa radiante) para estimular la adaptación.`}},
+{n:236,texto:`La administración de Fitonadiona al recién nacido se indica para:`,opts:{'A':`Prevenir la hipertensión pulmonar persistente.`,'B':`Prevenir la hipoglucemia neonatal.`,'C':`Prevenir la enfermedad hemorrágica por niveles bajos de protrombina.`,'D':`Prevenir el riesgo de sepsis por Neisseria gonorrhoeae.`}},
+{n:237,texto:`En un recién nacido en las primeras horas de vida, ¿cuál de los siguientes hallazgos clínicos es más sugerente de hernia diafragmática congénita?`,opts:{'A':`Dificultad respiratoria con aleteo nasal y sonidos respiratorios ausentes en el lado izquierdo.`,'B':`Distensión abdominal marcada con timpanismo generalizado y expansión torácica asimétrica.`,'C':`Respiración entrecortada con sonidos ausentes unilateralmente y sonidos cardíacos desplazados hacia la izquierda.`,'D':`Dificultad para comenzar la respiración con aleteo nasal y expansión torácica simétrica.`}},
+{n:238,texto:`Ante la identificación de ritmo de galope en un recién nacido, la actuación indicada es:`,opts:{'A':`Registrarlo a pesar de considerarlo fisiológico en el primer mes de vida.`,'B':`Remitir a consulta e iniciar estudio cardíaco.`,'C':`Repetir auscultación y reevaluar pasadas 12 horas y al alta.`,'D':`Registrar el hallazgo y mantener vigilancia clínica, sin remisión inmediata, si el recién nacido no presenta cianosis ni signos de dificultad respiratoria.`}},
+{n:239,texto:`¿Cuál de los siguientes hallazgos se considera patológico en la valoración del recién nacido?`,opts:{'A':`Perlas de Epstein.`,'B':`Reflejo de Moro presente.`,'C':`Perímetro torácico 1-2 cm menor que el cefálico.`,'D':`Pólipos cutáneos preauriculares.`}},
+{n:240,texto:`Para que la prueba de fenilcetonuria del recién nacido sea válida, debe realizarse:`,opts:{'A':`Antes de iniciar cualquier ingesta oral.`,'B':`Tras al menos 24 de haber iniciado tomas habituales (leche materna o fórmula).`,'C':`Solo tras las 72 de vida.`,'D':`Durante el expulsivo para reducir falsos negativos.`}},
+{n:241,texto:`En relación con el inicio de la respiración y la reabsorción del líquido pulmonar en el recién nacido sano a término, ¿cuál de las siguientes afirmaciones es correcta?`,opts:{'A':`El inicio de la respiración neonatal depende exclusivamente de estímulos químicos.`,'B':`La mayor parte del líquido pulmonar fetal se elimina por vía alveolar y su reabsorción se completa en las primeras 2 horas de vida.`,'C':`Durante el parto, la compresión torácica fetal incrementa la presión intratorácica y facilita la expulsión de aproximadamente un tercio del líquido pulmonar.`,'D':`En el recién nacido a término, el líquido pulmonar pasa directamente al torrente circulatorio, completándose la reabsorción antes de la primera hora.`}},
+{n:242,texto:`Tras la administración de la profilaxis ocular neonatal ¿cuál de los siguientes hallazgos es esperable y no necesariamente indicativo de patología?`,opts:{'A':`Eritema conjuntival leve con lagrimeo discreto y edema palpebral mínimo, autolimitado en la primera hora, atribuible al contacto con secreciones del canal del parto.`,'B':`Secreción conjuntival serosa transitoria sin hiperemia, que persiste hasta el tercer día de vida y se asocia de forma típica a obstrucción del conducto nasolagrimal.`,'C':`Hiperemia conjuntival bilateral con edema moderado y sin secreción purulenta, cuya persistencia hasta las 72 horas se considera un hallazgo normal tras profilaxis y no requiere seguimiento.`,'D':`Conjuntivitis química transitoria, secundaria a la profilaxis ocular, que puede resolverse espontáneamente en 24–48 horas.`}},
+{n:243,texto:`En relación con las necesidades dietéticas recomendadas desde el nacimiento hasta los 6 meses, ¿cuál de las siguientes afirmaciones es correcta?`,opts:{'A':`Las necesidades calóricas del recién nacido se sitúan en torno a 105–108 kcal/kg/día, distribuidas entre proteínas, hidratos de carbono y grasas.`,'B':`Las necesidades calóricas del recién nacido se sitúan aproximadamente en 80–90 kcal/kg/día, dado que el metabolismo basal neonatal es inferior al del adulto.`,'C':`Las necesidades calóricas del recién nacido se sitúan en torno a 100–104 kcal/kg/día, distribuidas entre proteínas, hidratos de carbono y grasas, vitaminas y minerales.`,'D':`Las necesidades calóricas del recién nacido se sitúan aproximadamente en 90-95– 90 kcal/kg/día, dado que el metabolismo basal neonatal es inferior al del adulto.`}},
+{n:244,texto:`Dentro de la educación a la familia durante el periodo neonatal uno de los objetivos es que los progenitores:`,opts:{'A':`Interpreten las vocalizaciones del recién nacido como conducta voluntaria intencional desde el nacimiento.`,'B':`Ajusten sus expectativas considerando que el recién nacido debe mantener ciclos regulares de sueño-vigilia desde los primeros días, y que el llanto persistente suele indicar siempre enfermedad orgánica.`,'C':`Verbalicen expectativas conductuales adecuadas en relación con el desarrollo del recién nacido y conozcan la asistencia continuada en atención primaria.`,'D':`Reconozcan que el patrón conductual del recién nacido es completamente predecible si se establece una rutina estricta, por lo que la variabilidad en respuestas y estados de alerta se considera un signo de mala adaptación.`}},
+{n:245,texto:`¿Cuál de las siguientes afirmaciones es correcta en relación a la clasificación del recién nacido según peso para la edad gestacional?`,opts:{'A':`La clasificación del recién nacido como pequeño para la edad gestacional (PEG), adecuado para la edad gestacional (AEG) o grande para la edad gestacional (GEG) se establece utilizando percentiles, considerando PEG < percentil 5 y GEG > percentil 95.`,'B':`La clasificación como pequeño para la edad gestacional (PEG), adecuado para la edad gestacional (AEG) o grande para la edad gestacional (GEG) se determina exclusivamente con el perímetro cefálico.`,'C':`La clasificación como PEG/AEG/GEG se determina en función del peso absoluto al nacimiento, considerando PEG < 2.500 g y GEG > 4.000 g, independientemente de la edad gestacional.`,'D':`El recién nacido se clasifica como pequeño para la edad gestacional (PEG) si su peso está por debajo del percentil 10; esta categorización permite anticipar problemas fisiológicos y orientar el plan de cuidados.`}},
+{n:246,texto:`En el marco de los cuidados generales del recién nacido sano se establecen medidas relacionadas con seguridad y detección precoz antes del alta. ¿Cuál de las siguientes actuaciones es adecuada?`,opts:{'A':`Verificar la identidad del recién nacido mediante la coincidencia de brazaletes madre-hijo antes de entregarlo a uno de los progenitores.`,'B':`Administrar la vacuna de hepatitis A y realizar el cribado metabólico solo si existen antecedentes familiares de enfermedades congénitas.`,'C':`Priorizar la valoración física del recién nacido, dejando los cribados y medidas de seguridad para la primera visita en atención primaria.`,'D':`Priorizar el alta precoz con recomendaciones de educación sanitaria centradas en cuidados domiciliarios, programando la realización de cribados (audición y metabólico) y la verificación administrativa de identidad en la primera revisión en atención primaria.`}},
+{n:247,texto:`La dosis profiláctica habitual de vitamina K1 recomendada en el recién nacido es:`,opts:{'A':`10 mg vía intramuscular en las primeras 24 horas de vida.`,'B':`0,5-1 mg IM en la primera hora tras el nacimiento.`,'C':`5 mg vía oral durante 2 días consecutivos.`,'D':`0,5 mg/kg intravenoso en la primera hora de vida.`}},
+{n:248,texto:`En relación con las características fisiológicas del recién nacido pretérmino, señale la opción INCORRECTA:`,opts:{'A':`Presenta inmadurez de la pared torácica y de los músculos respiratorios.`,'B':`Tiene riesgo de anemia por inmadurez eritrocitaria.`,'C':`Suele presentar déficit de surfactante pulmonar.`,'D':`Mantiene un almacenamiento mineral de calcio y glucosa similar al del recién nacido a término.`}},
+{n:249,texto:`En el cuidado del recién nacido pretérmino con sospecha de enterocolitis necrotizante, la vigilancia clínica por parte de enfermería es fundamental para su detección precoz. ¿Cuál de los siguientes hallazgos clínicos NO es sugestivo de esta patología?`,opts:{'A':`Presencia de sangre visible u oculta en heces.`,'B':`Distensión abdominal leve asociada a enlentecimiento del vaciamiento gástrico, sin repercusión sistémica inicial.`,'C':`Residuo gástrico aumentado con vómitos biliosos.`,'D':`Distensión abdominal con asas intestinales prominentes.`}},
+{n:250,texto:`En relación con los cuidados del recién nacido con enfermedad de la membrana hialina, ¿cuál de las siguientes actuaciones enfermeras es prioritaria en el manejo inicial de estos pacientes?`,opts:{'A':`Administrar oxígeno humidificado y calentado, y mantener temperatura neutra en incubadora.`,'B':`Iniciar alimentación enteral precoz y monitorizar el equilibrio ácido-base.`,'C':`Mantener al neonato en ambiente frío (32-34ºC) para reducir el consumo metabólico.`,'D':`Evitar la canalización de accesos vasculares para disminuir el riesgo infeccioso.`}}];
+let estado={},orden=PREGUNTAS.map(p=>p.n),modoFallos=false;
+function cargarEstado(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)estado=JSON.parse(r);}catch(e){estado={};}}
+function guardarEstado(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(estado));}catch(e){}}
+function calcularStats(){let ok=0,fail=0;PREGUNTAS.forEach(p=>{if(estado[p.n]){if(estado[p.n].correcto)ok++;else fail++;}});return{ok,fail,total:PREGUNTAS.length};}
+function actualizarHeader(){const s=calcularStats();const r=s.ok+s.fail;document.getElementById('barraFill').style.width=(r/s.total*100)+'%';document.getElementById('progresoTexto').textContent=r+' / '+s.total;document.getElementById('statOk').textContent=s.ok+' correctas';document.getElementById('statFail').textContent=s.fail+' incorrectas';}
+function renderizar(){
+  const c=document.getElementById('contenedor');c.innerHTML='';
+  const s=calcularStats();
+  if(s.ok+s.fail===s.total&&!modoFallos){const pct=Math.round(s.ok/s.total*100);const b=document.createElement('div');b.className='banner-completado';b.innerHTML=`<h2>🎉 ¡Lote completado!</h2><div class="puntuacion">${s.ok}/${s.total}</div><p>${pct}% de acierto · Preguntas 201–250 · Enfermería</p>`;c.appendChild(b);}
+  const pm=modoFallos?PREGUNTAS.filter(p=>estado[p.n]&&!estado[p.n].correcto):orden.map(n=>PREGUNTAS.find(p=>p.n===n));
+  if(modoFallos&&pm.length===0){c.innerHTML+='<div style="text-align:center;padding:40px;color:var(--gris);font-family:Syne,sans-serif;">¡No hay preguntas falladas! 🎯</div>';return;}
+  pm.forEach(pregunta=>{
+    if(!pregunta)return;
+    const resp=RESPUESTAS[pregunta.n];const est=estado[pregunta.n];const resuelta=!!est;
+    const card=document.createElement('div');card.className='pregunta-card'+(resuelta?(' resuelta'+(est.correcto?'':' fallo')):'');card.id='p'+pregunta.n;
+    let html=`<div class="pregunta-num">Pregunta ${pregunta.n}</div><div class="pregunta-texto">${pregunta.n}.- ${pregunta.texto}</div><div class="opciones">`;
+    Object.entries(pregunta.opts).forEach(([letra,texto])=>{
+      let cls='opcion-btn';let disabled=resuelta?'disabled':'';
+      if(resuelta){if(letra===resp){cls+=est.elegida===letra?' correcta':' correcta-marcada';}else if(letra===est.elegida&&!est.correcto){cls+=' incorrecta';}}
+      html+=`<button class="${cls}" ${disabled} onclick="responder(${pregunta.n},'${letra}')"><span class="letra">${letra})</span>${texto}</button>`;
+    });
+    html+=`</div>`;
+    if(resuelta){html+=est.correcto?`<div class="resultado-badge badge-ok">✓ Correcto</div>`:`<div class="resultado-badge badge-error">✗ Incorrecto — Respuesta: ${resp}</div>`;}
+    card.innerHTML=html;c.appendChild(card);
+  });
+}
+function responder(num,letra){if(estado[num])return;const resp=RESPUESTAS[num];estado[num]={elegida:letra,correcto:letra===resp};guardarEstado();actualizarHeader();renderizar();setTimeout(()=>{const el=document.getElementById('p'+num);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
+function resetearTodo(){if(!confirm('¿Seguro que quieres reiniciar todo el progreso de este lote?'))return;estado={};guardarEstado();modoFallos=false;orden=PREGUNTAS.map(p=>p.n);actualizarHeader();renderizar();}
+function mostrarSoloFallos(){modoFallos=!modoFallos;renderizar();}
+function ordenAleatorio(){modoFallos=false;orden=[...PREGUNTAS.map(p=>p.n)].sort(()=>Math.random()-0.5);renderizar();window.scrollTo({top:0,behavior:'smooth'});}
+cargarEstado();actualizarHeader();renderizar();
+</script>
+</body>
+</html>

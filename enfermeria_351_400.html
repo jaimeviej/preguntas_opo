@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Osakidetza OPE — Enfermería 351-400</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+:root{
+  --primario:#1a4a6b;--primario-claro:#256a9b;--fondo:#f0f6fa;--fondo-suave:#e8f2f8;
+  --blanco:#ffffff;--gris:#6b7b8d;--borde:#dde4e0;
+  --correcto:#1a7a5e;--incorrecto:#b83232;
+  --correcto-bg:#e6f7f1;--incorrecto-bg:#fdecea;
+  --sombra:0 4px 24px rgba(0,0,0,0.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--fondo);color:#1a1a2e;min-height:100vh;padding-bottom:60px;}
+header{background:var(--primario);color:white;padding:28px 24px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.15);}
+header h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;letter-spacing:-0.02em;line-height:1.2;}
+header .subtitulo{font-size:0.8rem;opacity:0.8;margin-top:2px;font-weight:300;}
+.barra-progreso-wrap{margin-top:12px;display:flex;align-items:center;gap:10px;}
+.barra-progreso{flex:1;height:6px;background:rgba(255,255,255,0.25);border-radius:10px;overflow:hidden;}
+.barra-progreso-fill{height:100%;background:rgba(255,255,255,0.7);border-radius:10px;transition:width 0.4s ease;}
+.progreso-texto{font-size:0.75rem;opacity:0.85;white-space:nowrap;}
+.stats-header{display:flex;gap:16px;margin-top:10px;font-size:0.75rem;}
+.stat-item{display:flex;align-items:center;gap:5px;opacity:0.9;}
+.stat-dot{width:8px;height:8px;border-radius:50%;}
+.dot-correcto{background:rgba(255,255,255,0.8);}
+.dot-incorrecto{background:#ff8a80;}
+.contenedor{max-width:780px;margin:0 auto;padding:24px 16px;}
+.pregunta-card{background:var(--blanco);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:var(--sombra);border:1px solid var(--borde);}
+.pregunta-card.resuelta{border-left:4px solid var(--primario-claro);}
+.pregunta-card.resuelta.fallo{border-left:4px solid var(--incorrecto);}
+.pregunta-num{font-family:'Syne',sans-serif;font-size:0.7rem;font-weight:700;color:var(--primario);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.pregunta-texto{font-size:0.95rem;font-weight:500;line-height:1.55;margin-bottom:18px;color:#1a1a2e;}
+.opciones{display:flex;flex-direction:column;gap:8px;}
+.opcion-btn{text-align:left;background:var(--fondo);border:1.5px solid var(--borde);border-radius:10px;padding:11px 14px;font-size:0.88rem;font-family:'DM Sans',sans-serif;color:#1a1a2e;cursor:pointer;transition:all 0.18s;line-height:1.45;}
+.opcion-btn:hover:not(:disabled){border-color:var(--primario);background:var(--fondo-suave);transform:translateX(2px);}
+.opcion-btn:disabled{cursor:default;}
+.opcion-btn .letra{font-weight:700;color:var(--gris);margin-right:6px;font-family:'Syne',sans-serif;font-size:0.82rem;}
+.opcion-btn.correcta{background:var(--correcto-bg);border-color:var(--correcto);color:var(--correcto);font-weight:500;}
+.opcion-btn.correcta .letra{color:var(--correcto);}
+.opcion-btn.incorrecta{background:var(--incorrecto-bg);border-color:var(--incorrecto);color:var(--incorrecto);font-weight:500;}
+.opcion-btn.incorrecta .letra{color:var(--incorrecto);}
+.opcion-btn.correcta-marcada{background:var(--correcto-bg);border-color:var(--correcto);color:var(--correcto);font-weight:600;}
+.resultado-badge{display:inline-flex;align-items:center;gap:5px;margin-top:12px;padding:5px 11px;border-radius:20px;font-size:0.78rem;font-weight:600;font-family:'Syne',sans-serif;}
+.badge-ok{background:var(--correcto-bg);color:var(--correcto);}
+.badge-error{background:var(--incorrecto-bg);color:var(--incorrecto);}
+.botones-footer{position:fixed;bottom:0;left:0;right:0;background:var(--blanco);border-top:1px solid var(--borde);padding:12px 16px;display:flex;gap:10px;justify-content:center;box-shadow:0 -4px 20px rgba(0,0,0,0.07);z-index:99;}
+.btn-accion{font-family:'Syne',sans-serif;font-size:0.8rem;font-weight:700;padding:10px 20px;border:none;border-radius:8px;cursor:pointer;transition:all 0.18s;}
+.btn-resetear{background:var(--fondo);color:var(--gris);border:1.5px solid var(--borde);}
+.btn-resetear:hover{background:var(--incorrecto-bg);border-color:var(--incorrecto);color:var(--incorrecto);}
+.btn-fallos{background:var(--fondo);color:var(--primario);border:1.5px solid var(--borde);}
+.btn-fallos:hover{background:var(--fondo-suave);}
+.btn-aleatorio{background:var(--primario);color:white;}
+.btn-aleatorio:hover{background:var(--primario-claro);}
+.banner-completado{background:linear-gradient(135deg,var(--primario) 0%,var(--primario-claro) 100%);color:white;border-radius:16px;padding:28px 24px;text-align:center;margin-bottom:24px;box-shadow:var(--sombra);}
+.banner-completado h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:800;margin-bottom:6px;}
+.banner-completado .puntuacion{font-size:2.5rem;font-weight:800;font-family:'Syne',sans-serif;margin:8px 0;}
+.banner-completado p{opacity:0.9;font-size:0.88rem;}
+@media(max-width:500px){.pregunta-texto{font-size:0.88rem;}.opcion-btn{font-size:0.82rem;padding:10px 12px;}header h1{font-size:1.1rem;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🩺 Enfermería OPE — Preguntas 351 a 400</h1>
+  <div class="subtitulo">Batería específica Enfermería · OPE 23-24-25</div>
+  <div class="barra-progreso-wrap">
+    <div class="barra-progreso"><div class="barra-progreso-fill" id="barraFill" style="width:0%"></div></div>
+    <span class="progreso-texto" id="progresoTexto">0 / 50</span>
+  </div>
+  <div class="stats-header">
+    <div class="stat-item"><span class="stat-dot dot-correcto"></span><span id="statOk">0 correctas</span></div>
+    <div class="stat-item"><span class="stat-dot dot-incorrecto"></span><span id="statFail">0 incorrectas</span></div>
+  </div>
+</header>
+<div class="contenedor" id="contenedor"></div>
+<div class="botones-footer">
+  <button class="btn-accion btn-resetear" onclick="resetearTodo()">↺ Reiniciar</button>
+  <button class="btn-accion btn-fallos" onclick="mostrarSoloFallos()">⚠ Solo fallos</button>
+  <button class="btn-accion btn-aleatorio" onclick="ordenAleatorio()">🔀 Aleatorio</button>
+</div>
+<script>
+const STORAGE_KEY='enfermeria_q351_400';
+const RESPUESTAS={351:'A',352:'A',353:'B',354:'D',355:'B',356:'B',357:'A',358:'C',359:'D',360:'C',361:'A',362:'D',363:'C',364:'B',365:'D',366:'A',367:'D',368:'B',369:'B',370:'C',371:'D',372:'A',373:'A',374:'C',375:'D',376:'C',377:'A',378:'C',379:'D',380:'D',381:'D',382:'A',383:'C',384:'B',385:'A',386:'D',387:'D',388:'C',389:'B',390:'B',391:'C',392:'D',393:'C',394:'B',395:'B',396:'D',397:'C',398:'A',399:'D',400:'B'};
+const PREGUNTAS=[{n:351,texto:`NO es una característica asignada al papel de los profesionales sanitarios en promoción y educación para la salud:`,opts:{'A':`Mejorar el liderazgo y la gobernanza participativa para la salud.`,'B':`Mejorar la investigación.`,'C':`Impulsar estrategias encaminadas a conseguir que la salud se convierta en tema prioritario.`,'D':`Informar del estado de salud a individuos y comunidad.`}},
+{n:352,texto:`Señale la respuesta CORRECTA respecto a las principales etapas de la Evaluación del Impacto de la Salud.`,opts:{'A':`Screening: permite identificar si una política, un proyecto o un programa es relevante para la salud.`,'B':`Análisis: Permite identificar mapas de conexiones y definir los límites de los aspectos que van a ser valorados.`,'C':`Seguimiento: Cuantifica el impacto considerando la evidencia existente.`,'D':`Informar: Monitorizar y evaluar los impactos de la política para generar evidencia y favorecer su difusión.`}},
+{n:353,texto:`Se considera un consumo de riesgo moderado en función de la cantidad de alcohol consumido:`,opts:{'A':`Varones < 10 UBE/semana y Mujeres < 8 UBE/semana.`,'B':`Varones 10-17 UBE/semana y Mujeres 8-14 UBE/semana.`,'C':`Varones 17-28 UBE/semana y Mujeres 11-17 UBE/semana.`,'D':`Varones 18-32 UBE/semana y Mujeres 12-19 UBE/semana.`}},
+{n:354,texto:`A partir de la perspectiva del modelo salutogénico en la promoción de la salud, diversos autores han desarrollado el concepto de determinantes de la salud. ¿Cuál de los siguientes autores NO se asocia con este desarrollo?`,opts:{'A':`Lalonde.`,'B':`Diez Roux.`,'C':`Marmot.`,'D':`Brownson.`}},
+{n:355,texto:`En relación con la Evaluación de Impacto en Salud (EIS), señale la opción correcta:`,opts:{'A':`Prospectiva: identifica las consecuencias de las políticas ya implementadas`,'B':`Concurrente: analiza las consecuencias de una medida mientras se está implementando.`,'C':`Retrospectiva: identifica las consecuencias de una medida durante su implementación, especialmente cuando se sospecha un impacto negativo.`,'D':`Retrospectiva: predice los efectos de las políticas antes de su implementación.`}},
+{n:356,texto:`¿El concepto de Educación para la Salud según la OMS es?`,opts:{'A':`Una acción ejercida sobre los individuos para llevarles a modificar sus comportamientos.`,'B':`Es un proceso de enseñanza que busca capacitar a grupos de riesgo para adquirir conocimientos, desarrollar habilidades y adoptar actitudes que promuevan estilos de vida saludables y prevengan enfermedades, mejorando el bienestar físico, mental y social a través de la toma de decisiones informadas y la participación activa.`,'C':`Disciplina encargada de orientar y organizar procesos educativos con el propósito de influir positivamente en conocimientos, aptitudes y costumbres de individuos y comunidades en relación con su enfermedad.`,'D':`Proceso de enseñanza para mejorar conocimientos, habilidades y aptitudes que promueven la salud y la enfermedad.`}},
+{n:357,texto:`El término “inmunización” hace referencia a:`,opts:{'A':`La provisión de inmunidad artificial activa o pasiva.`,'B':`La producción endógena de anticuerpos tras vacunación.`,'C':`La inducción de inmunidad natural tras pasar una infección.`,'D':`Exclusivamente a la administración de vacunas.`}},
+{n:358,texto:`La inmunidad pasiva natural se adquiere principalmente por:`,opts:{'A':`Vacunación materna.`,'B':`Lactancia artificial.`,'C':`Paso transplacentario de IgG y lactancia materna (IgA).`,'D':`Exposición ambiental temprana.`}},
+{n:359,texto:`Una vacuna se define como:`,opts:{'A':`Solución que contiene anticuerpos obtenida a partir de sangre humana y utilizada para mantener la inmunidad en personas inmunodeficientes o para conseguir inmunización pasiva.`,'B':`Toxinas bacterianas modificadas, convertidas en no tóxicas, pero con capacidad de estimular la formación de antitoxinas.`,'C':`Cualquier molécula capaz de ser reconocida por un anticuerpo o receptor de célula T. Los antígenos de las vacunas suelen ser bacterias o virus que a su vez pueden ser atenuados (vivos) o inactivados (muertos). Pueden ser enteros o una parte de ellos.`,'D':`Suspensión de microorganismos vivos, atenuados o porciones antigénicas de dichos agentes, que, introducidos en un huésped, producen respuesta inmunitaria adaptativa (especificidad + memoria) para prevenir la enfermedad causada por dichos microorganismos.`}},
+{n:360,texto:`¿Cuál de las siguientes vacunas induce inmunidad sin memoria inmunológica?`,opts:{'A':`Vacunas conjugadas.`,'B':`Vacunas de ARNm.`,'C':`Vacunas de polisacáridos puros.`,'D':`Vacunas atenuadas.`}},
+{n:361,texto:`En lactantes, el lugar anatómico recomendado para la vacunación intramuscular es:`,opts:{'A':`Vasto externo del muslo.`,'B':`Deltoides.`,'C':`Glúteo.`,'D':`Región escapular.`}},
+{n:362,texto:`La congelación de una vacuna puede provocar:`,opts:{'A':`Aumento de su inmunogenicidad.`,'B':`Pérdida visible del color.`,'C':`Contaminación bacteriana.`,'D':`Inactivación irreversible.`}},
+{n:363,texto:`“Dosis puesta, dosis que cuenta” significa que:`,opts:{'A':`Se reinicia la pauta vacunal independientemente del tiempo transcurrido.`,'B':`Se tendrán en cuenta los intervalos mínimos entre dosis de una misma vacuna.`,'C':`Se contabilizan todas las dosis recibidas y que hayan respetado los intervalos mínimos.`,'D':`Conocer los intervalos entre vacunas, las pautas según edad y pautas aceleradas de algunas vacunas nos facilitará diseñar el calendario vacunal.`}},
+{n:364,texto:`¿Cuál es una contraindicación permanente para la vacunación?`,opts:{'A':`Enfermedad leve con o sin febrícula.`,'B':`Reacción anafiláctica previa a un componente.`,'C':`Lactancia materna.`,'D':`Tratamiento antibiótico.`}},
+{n:365,texto:`Tras la administración de tratamiento sustitutivo con inmunoglobulinas mediante hemoderivados, se recomienda diferir la administración de vacunas vivas atenuadas:`,opts:{'A':`Al menos 1 mes.`,'B':`Al menos 2 meses.`,'C':`Al menos 3 meses.`,'D':`Al menos 6 meses.`}},
+{n:366,texto:`¿Qué tipo de vacuna puede administrarse en las personas con inmunodeficiencias humorales que reciben inmunoglobulinas de forma periódica?`,opts:{'A':`Inactivadas.`,'B':`Oral.`,'C':`Intradérmica.`,'D':`Viva atenuada.`}},
+{n:367,texto:`La administración simultánea de vacunas:`,opts:{'A':`Reduce las probabilidades de inmunización.`,'B':`Puede administrarse en idénticos lugares anatómicos.`,'C':`Deben mezclarse vacunas distintas en la misma jeringa.`,'D':`Es segura y recomendable.`}},
+{n:368,texto:`Según el calendario vacunal infantil de Euskadi, ¿Que vacunas corresponde administrar a los 11 meses? Calendario vacunal eus 2026`,opts:{'A':`Hepatitis B, difteria, tétanos, tosferina, Hib, poliomielitis), neumococo conjugada,Meningococo (B) y rotavirus.`,'B':`Hepatitis B, difteria, tétanos, tosferina, Hib, poliomielitis), neumococo conjugada.`,'C':`Sarampion, Rubeola, Parotiditis y Meningococo (B,ACWY).`,'D':`Hepatitis B, difteria, tétanos, tosferina, Hib, poliomielitis), neumococo conjugada,Meningococo (B,ACWY) y rotavirus.`}},
+{n:369,texto:`El concepto de polimedicación se define como:`,opts:{'A':`El consumo de menos de cinco fármacos de forma concomitante.`,'B':`El consumo de cinco o más fármacos de forma concomitante.`,'C':`El consumo de ocho o más fármacos de forma concomitante.`,'D':`El consumo de diez o más fármacos de forma concomitante.`}},
+{n:370,texto:`¿Qué criterios propuestos por la Sociedad Europea de Geriatría son los más utilizados para detectar prescripciones potencialmente inapropiadas en personas mayores de 65 años?`,opts:{'A':`AGS Beers.`,'B':`LESS-CHRON.`,'C':`STOPP/START.`,'D':`IPEC.`}},
+{n:371,texto:`¿Cuál de las siguientes, NO forma parte de las cuatro enfermedades no transmisibles responsables de morbilidad y mortalidad en el mundo?`,opts:{'A':`Cardiovasculares.`,'B':`Cáncer.`,'C':`Diabetes.`,'D':`Osteoarticulares.`}},
+{n:372,texto:`El termino comorbilidad hace referencia a:`,opts:{'A':`Es la ocurrencia simultanea de dos patologías en la misma persona, sin tener en cuenta ni el orden jerárquico entre ellos ni su gravedad.`,'B':`Es la existencia de otras enfermedades en una persona que ya tiene una enfermedad que consideramos principal.`,'C':`Es la aparición de otras enfermedades en una persona que ya tiene una enfermedad que consideramos secundaria.`,'D':`Es la ocurrencia simultanea de múltiples problemas de salud en la misma persona, sin tener en cuenta ni el orden jerárquico entre ellos ni su gravedad.`}},
+{n:373,texto:`¿Es un método indirecto validado para medir la adherencia al tratamiento farmacológico?`,opts:{'A':`Test de Morisky-Green.`,'B':`El Indice internacional normalizado (INR).`,'C':`Hemoglobina glicosilada.`,'D':`Test de Hemingway.`}},
+{n:374,texto:`Es un requisito que deben cumplir las rutas asistenciales que se establezcan para la atención de pacientes crónicos.`,opts:{'A':`No tienen por qué ser consensuadas entre los dos niveles (Gestores y profesionales de la salud).`,'B':`Abordar aspectos globales de un proceso asistencial y no aspectos demasiado concretos.`,'C':`Que las rutas de coordinación sean claras y concisas, con capacidad de ser modificadas fácilmente.`,'D':`Mantener contactos pasivos con la enfermera referente del/ de la paciente.`}},
+{n:375,texto:`Es una de las cinco cualificaciones básicas con las que deben contar todos los profesionales que atienden a pacientes con problemas de salud crónicos:`,opts:{'A':`Comprensión emocional.`,'B':`Sociabilidad.`,'C':`Disposición al optimismo.`,'D':`Atención centrada en el paciente.`}},
+{n:376,texto:`¿Cuál de las siguientes NO es una enfermedad crónica frecuente en la infancia?`,opts:{'A':`Trastorno de déficit de atención por hiperactividad (TDAH).`,'B':`Fibrosis quística.`,'C':`Cardiopatía isquemica.`,'D':`Desnutrición.`}},
+{n:377,texto:`Un factor en las intervenciones en procesos crónicos es:`,opts:{'A':`Se priorizan intervenciones preventivas, proactivas y rehabilitadoras frente al enfoque curativo de la enfermedad aguda.`,'B':`Se centra la atención en las necesidades globales del paciente a corto plazo, más allá de lo exclusivamente clínico.`,'C':`Se requiere una atención coordinada e integral con “visión individuo “desde la atención primaria a lo largo de la enfermedad.`,'D':`Se realiza una valoración global de la persona, incidiendo en síntomas agudos e incidiendo en su contexto social y funcional.`}},
+{n:378,texto:`Es un modelo poblacional de referencia e intervención de atención a crónicos:`,opts:{'A':`Modelo de Atención a crónicos.`,'B':`Piramide de King´s Fund.`,'C':`Modelo de Atención Innovadora a condiciones crónicas.`,'D':`Pirámide de Pagoda.`}},
+{n:379,texto:`Señale la respuesta INCORRECTA en relación con la Pirámide de Kaiser:`,opts:{'A':`En los pacientes de mayor complejidad con frecuente comorbilidad se hace necesaria una gestión integral del caso en su conjunto, con cuidados fundamentalmente profesionales.`,'B':`Los pacientes de alto riesgo, pero de menor complejidad en lo que respecta a su comorbilidad reciben una gestión de la enfermedad que combina cuidados informales y cuidados profesionales.`,'C':`La mayoría de pacientes crónicos con condiciones todavía en estadios incipientes reciben apoyo para su autogestión.`,'D':`La población general es foco de intervenciones de prevención y promoción que tratan de controlar los factores de riesgo que puedan llevar a los individuos a la enfermedad crónica.`}},
+{n:380,texto:`Probablemente, la principal referencia internacional en el ámbito de la atención a las enfermedades crónicas es el Modelo de Atención a Crónicos. ¿Cuáles son los tres planos interrelacionados en los que se articula la atención a la cronicidad?`,opts:{'A':`La comunidad actúa como usuaria de los servicios, el sistema sanitario se organiza con proveedores y aseguramiento, y la interacción con el paciente que tiene impacto clínico.`,'B':`Las políticas comunitarias sustituyen al sistema sanitario formal, las organizaciones proveedoras desaparecen en favor de la autogestión, y la práctica clínica se desarrolla sin comunicación directa con el paciente.`,'C':`La comunidad con sus recursos públicos y privados determinan por completo las decisiones clínicas, el sistema sanitario aporta estructuras organizativas propias, y la interacción con el paciente en la asistencia sanitaria.`,'D':`La comunidad con sus políticas y múltiples recursos públicos y privados, el sistema sanitario con sus organizaciones proveedoras y esquemas de aseguramiento, y la interacción con el paciente en la práctica clínica.`}},
+{n:381,texto:`¿Cuál de las siguientes afirmaciones respecto a la absorción de los fármacos es INCORRECTA?`,opts:{'A':`La biodisponibilidad indica la cantidad de fármaco inalterado que alcanza la circulación sistémica y también la velocidad a la que lo hace.`,'B':`La administración intravenosa presenta una biodisponibilidad del 100%, ya que el fármaco llega directamente a la circulación sistémica.`,'C':`El metabolismo presistémico puede disminuir la cantidad de fármaco que alcanza la circulación sistémica.`,'D':`El grado de ionización, la liposolubilidad y el volumen de distribución del fármaco son factores influyentes en el grado de absorción de los fármacos.`}},
+{n:382,texto:`¿Cuál de las siguientes afirmaciones respecto a la eliminación renal de los fármacos es correcta?`,opts:{'A':`La filtración glomerular permite el paso del fármaco desde la sangre al filtrado glomerular; se filtran con mayor facilidad las moléculas hidrosolubles y de pequeño tamaño.`,'B':`La filtración glomerular se realiza mediante transporte activo y depende principalmente del pH urinario.`,'C':`La reabsorción tubular ocurre fundamentalmente por filtración y es independiente de la liposolubilidad del fármaco.`,'D':`La reabsorción tubular se produce únicamente en fármacos ionizados, ya que atraviesan mejor las membranas tubulares.`}},
+{n:383,texto:`Según la clasificación por frecuencia de aparición, ¿cuál de las siguientes afirmaciones sobre las reacciones adversas a medicamentos (RAM) es correcta?`,opts:{'A':`Una RAM frecuente es aquella que aparece en ≥1/1.000 y <1/100.`,'B':`Una RAM muy frecuente es aquella que aparece en ≥1/100 y <1/10.`,'C':`Una RAM rara es aquella que aparece en ≥1/10.000 y <1/1.000.`,'D':`Una RAM muy rara es aquella que aparece en ≥1/10.000 y <1/1.000.`}},
+{n:384,texto:`¿Cuál de las siguientes afirmaciones está relacionada con las reacciones adversas a medicamentos de tipo B?`,opts:{'A':`Se trata de reacciones cuyos efectos están relacionados con el mecanismo de acción del fármaco.`,'B':`No se relacionan con la acción farmacológica del medicamento y, por tanto, son imprevisibles.`,'C':`Se trata de reacciones que se producen como consecuencia de la administración prolongada y continua de un fármaco.`,'D':`Son reacciones adversas que aparecen algún tiempo después de la administración del medicamento.`}},
+{n:385,texto:`En España, la notificación espontánea de sospechas de reacciones adversas a medicamentos es obligatoria para profesionales sanitarios y laboratorios farmacéuticos, y voluntaria para los ciudadanos, según la normativa reguladora de farmacovigilancia. ¿Cuál de las siguientes opciones identifica correctamente el Real Decreto y su fecha?`,opts:{'A':`Real Decreto 577/2013, de 26 de julio de 2013.`,'B':`Real Decreto 577/2012, de 26 de julio de 2012.`,'C':`Real Decreto 557/2013, de 26 de junio de 2013.`,'D':`Real Decreto 577/2014, de 26 de julio de 2014.`}},
+{n:386,texto:`¿Cuál de los siguientes signos o síntomas NO se considera una reacción adversa medicamentosa de las que con mayor frecuencia aparecen en las bases de datos de farmacovigilancia?`,opts:{'A':`Hipotensión.`,'B':`Urticaria.`,'C':`Prurito.`,'D':`Ictericia.`}},
+{n:387,texto:`Respecto a la vía inhalatoria de administración de fármacos, ¿cuál de las siguientes afirmaciones es INCORRECTA?`,opts:{'A':`Permite concentraciones elevadas en el lugar de acción y bajas en sangre.`,'B':`La absorción es rápida en los alvéolos por su alta permeabilidad e irrigación.`,'C':`Los fármacos pueden sufrir metabolismo presistémico.`,'D':`El mecanismo de absorción suele ser, mayoritariamente, por difusión pasiva para los fármacos hidrososolubles.`}},
+{n:388,texto:`Respecto a la excreción biliar y la circulación enterohepática de los fármacos, ¿cuál de las siguientes afirmaciones es correcta?`,opts:{'A':`Se eliminan por bilis fármacos de bajo peso molecular.`,'B':`La circulación enterohepática impide la reabsorción intestinal.`,'C':`La β-glucuronidasa bacteriana puede liberar fármaco activo desde metabolitos conjugados.`,'D':`Se reabsorben principalmente metabolitos conjugados sin modificación previa.`}},
+{n:389,texto:`En España, ¿cuál es el método de notificación de reacciones adversas a medicamentos más utilizado?`,opts:{'A':`Formulario electrónico de historias clínicas.`,'B':`Tarjeta amarilla.`,'C':`Registro de dispensación farmacéutica.`,'D':`Notificación a través del Centro Autonómico de Farmacovigilancia.`}},
+{n:390,texto:`Los medicamentos termolábiles requieren condiciones específicas de conservación para mantener su estabilidad y eficacia terapéutica. ¿Cuál es el rango de temperatura adecuado para la conservación de los medicamentos termolábiles?`,opts:{'A':`Entre 0 y 4 °C.`,'B':`Entre 2 y 8 °C.`,'C':`Entre 6 y 10 °C.`,'D':`Entre 8 y 12 °C.`}},
+{n:391,texto:`En relación con las revisiones periódicas de los lugares de almacenamiento de medicamentos en los centros sanitarios, señale la afirmación que NO es correcta:`,opts:{'A':`Comprobación de la adecuada conservación de los medicamentos en función de sus requerimientos térmicos y de protección frente a la luz.`,'B':`Revisión sistemática de las fechas de caducidad de los medicamentos almacenados.`,'C':`Establecimiento de un orden lógico de los medicamentos, ordenados alfabéticamente por nombre comercial.`,'D':`Verificación del adecuado almacenamiento de medicamentos sometidos a control especial, como los estupefacientes.`}},
+{n:392,texto:`En el manejo y conservación de los medicamentos termolábiles, el personal de enfermería debe tener en cuenta determinados aspectos para garantizar su estabilidad y eficacia terapéutica. ¿Cuál de las siguientes afirmaciones NO es correcta?`,opts:{'A':`El aumento de la temperatura puede acelerar el deterioro del medicamento y reducir su efectividad.`,'B':`Las temperaturas excesivamente bajas pueden provocar congelación y alteraciones físicas en algunos preparados.`,'C':`La ruptura de la cadena de frío puede favorecer la formación de productos tóxicos.`,'D':`La mayoría de los medicamentos termolábiles pueden permanecer durante varias horas a temperatura ambiente, hasta un máximo de 20 °C, sin perder sus propiedades fisicoquímicas.`}},
+{n:393,texto:`Una paciente ingresada en el servicio de urgencias precisa fluidoterapia intravenosa con suero fisiológico al 0,9 %, prescribiéndose un volumen total de 500 ml. ¿cuál es la cantidad total de cloruro sódico administrada en este volumen?`,opts:{'A':`2,25 gramos.`,'B':`3,5 gramos.`,'C':`4,5 gramos.`,'D':`9 gramos.`}},
+{n:394,texto:`En una consulta de atención primaria se prescribe una pomada dermatológica con una concentración del 5 % para el tratamiento de una dermatosis inflamatoria. Se dispensa un envase que contiene 20 g de pomada. ¿cuál es la cantidad de principio activo contenida en este envase?`,opts:{'A':`0,5 gramos.`,'B':`1 gramo.`,'C':`2 gramos.`,'D':`5 gramos.`}},
+{n:395,texto:`Se consideran soluciones isotónicas aquellas que pueden administrarse por vía venosa periférica sin producir flebitis significativa, al presentar una osmolaridad compatible con la del plasma. ¿Cuál de las siguientes soluciones se considera isotónica?`,opts:{'A':`160 mOsmol/l.`,'B':`420 mOsmol/l.`,'C':`690 mOsmol/l.`,'D':`870 mOsmol/l.`}},
+{n:396,texto:`En la práctica clínica, al elaborar una prescripción farmacológica es fundamental tener en cuenta determinados factores que pueden influir de manera significativa en la adherencia al tratamiento por parte del paciente. ¿Cuál de los siguientes factores NO se asocia habitualmente de manera directa con una disminución de la adherencia terapéutica?`,opts:{'A':`Bajo nivel educativo y analfabetismo.`,'B':`Dificultad de acceso a los centros sanitarios y elevado coste del transporte.`,'C':`Creencias culturales y percepciones erróneas sobre la enfermedad.`,'D':`Obesidad asociada a malos hábitos alimenticios.`}},
+{n:397,texto:`El Servicio Profesional Farmacéutico de Sistemas Personalizados de Dosificación en farmacia comunitaria consiste en la preparación individualizada de la medicación de pacientes, especialmente polimedicados, con el objetivo de mejorar la adherencia terapéutica y reducir errores en la administración. En relación con este servicio, señale la afirmación INCORRECTA:`,opts:{'A':`Puede ser solicitado por el médico prescriptor cuando detecta riesgo de incumplimiento terapéutico.`,'B':`Puede ser recomendado por el trabajador social en pacientes con dificultades de alfabetización.`,'C':`Únicamente el paciente o su familia pueden solicitar este servicio a la oficina de farmacia.`,'D':`Facilita la correcta administración de la medicación y contribuye a la mejora del cumplimiento terapéutico.`}},
+{n:398,texto:`En el contexto de la atención domiciliaria, el personal de enfermería desempeña un papel clave en la detección de errores en la administración de medicamentos. ¿Cuál de los siguientes conjuntos de estrategias resulta más adecuado para identificar dichos errores?`,opts:{'A':`Entrevista estructurada, demostraciones prácticas y supervisión de los registros de autoadministración.`,'B':`Revisión de la historia clínica, control analítico y ajuste farmacológico.`,'C':`Encuestas telefónicas, revisión administrativa y control del stock domiciliario.`,'D':`Observación directa, valoración nutricional y evaluación del entorno físico.`}},
+{n:399,texto:`La vía sublingual permite una rápida absorción del fármaco y evita el metabolismo hepático de primer paso, lo que incrementa su biodisponibilidad y rapidez de acción. ¿Cuál de las siguientes situaciones clínicas justifica preferentemente el uso de la vía sublingual?`,opts:{'A':`Paciente con infección respiratoria que precisa antibioterapia oral durante 10 días.`,'B':`Paciente con dolor abdominal funcional y episodios recurrentes de náuseas leves, en tratamiento sintomático.`,'C':`Paciente con artritis reumatoide en tratamiento inmunomodulador de mantenimiento.`,'D':`Paciente con dolor torácico de inicio súbito compatible con isquemia miocárdica y dificultad para la deglución.`}},
+{n:400,texto:`En la administración de medicamentos por vía intramuscular en el paciente adulto, es fundamental seleccionar adecuadamente el área anatómica en función del volumen a administrar. ¿Cuál de las siguientes asociaciones entre zona de inyección intramuscular y volumen máximo recomendado es correcta?`,opts:{'A':`Área deltoidea: hasta 2,5 ml.`,'B':`Área ventroglútea: hasta 5 ml.`,'C':`Área dorsoglútea: hasta 8 ml.`,'D':`Área del vasto lateral externo: hasta 3 ml.`}}];
+let estado={},orden=PREGUNTAS.map(p=>p.n),modoFallos=false;
+function cargarEstado(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)estado=JSON.parse(r);}catch(e){estado={};}}
+function guardarEstado(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(estado));}catch(e){}}
+function calcularStats(){let ok=0,fail=0;PREGUNTAS.forEach(p=>{if(estado[p.n]){if(estado[p.n].correcto)ok++;else fail++;}});return{ok,fail,total:PREGUNTAS.length};}
+function actualizarHeader(){const s=calcularStats();const r=s.ok+s.fail;document.getElementById('barraFill').style.width=(r/s.total*100)+'%';document.getElementById('progresoTexto').textContent=r+' / '+s.total;document.getElementById('statOk').textContent=s.ok+' correctas';document.getElementById('statFail').textContent=s.fail+' incorrectas';}
+function renderizar(){
+  const c=document.getElementById('contenedor');c.innerHTML='';
+  const s=calcularStats();
+  if(s.ok+s.fail===s.total&&!modoFallos){const pct=Math.round(s.ok/s.total*100);const b=document.createElement('div');b.className='banner-completado';b.innerHTML=`<h2>🎉 ¡Lote completado!</h2><div class="puntuacion">${s.ok}/${s.total}</div><p>${pct}% de acierto · Preguntas 351–400 · Enfermería</p>`;c.appendChild(b);}
+  const pm=modoFallos?PREGUNTAS.filter(p=>estado[p.n]&&!estado[p.n].correcto):orden.map(n=>PREGUNTAS.find(p=>p.n===n));
+  if(modoFallos&&pm.length===0){c.innerHTML+='<div style="text-align:center;padding:40px;color:var(--gris);font-family:Syne,sans-serif;">¡No hay preguntas falladas! 🎯</div>';return;}
+  pm.forEach(pregunta=>{
+    if(!pregunta)return;
+    const resp=RESPUESTAS[pregunta.n];const est=estado[pregunta.n];const resuelta=!!est;
+    const card=document.createElement('div');card.className='pregunta-card'+(resuelta?(' resuelta'+(est.correcto?'':' fallo')):'');card.id='p'+pregunta.n;
+    let html=`<div class="pregunta-num">Pregunta ${pregunta.n}</div><div class="pregunta-texto">${pregunta.n}.- ${pregunta.texto}</div><div class="opciones">`;
+    Object.entries(pregunta.opts).forEach(([letra,texto])=>{
+      let cls='opcion-btn';let disabled=resuelta?'disabled':'';
+      if(resuelta){if(letra===resp){cls+=est.elegida===letra?' correcta':' correcta-marcada';}else if(letra===est.elegida&&!est.correcto){cls+=' incorrecta';}}
+      html+=`<button class="${cls}" ${disabled} onclick="responder(${pregunta.n},'${letra}')"><span class="letra">${letra})</span>${texto}</button>`;
+    });
+    html+=`</div>`;
+    if(resuelta){html+=est.correcto?`<div class="resultado-badge badge-ok">✓ Correcto</div>`:`<div class="resultado-badge badge-error">✗ Incorrecto — Respuesta: ${resp}</div>`;}
+    card.innerHTML=html;c.appendChild(card);
+  });
+}
+function responder(num,letra){if(estado[num])return;const resp=RESPUESTAS[num];estado[num]={elegida:letra,correcto:letra===resp};guardarEstado();actualizarHeader();renderizar();setTimeout(()=>{const el=document.getElementById('p'+num);if(el)el.scrollIntoView({behavior:'smooth',block:'nearest'});},100);}
+function resetearTodo(){if(!confirm('¿Seguro que quieres reiniciar todo el progreso de este lote?'))return;estado={};guardarEstado();modoFallos=false;orden=PREGUNTAS.map(p=>p.n);actualizarHeader();renderizar();}
+function mostrarSoloFallos(){modoFallos=!modoFallos;renderizar();}
+function ordenAleatorio(){modoFallos=false;orden=[...PREGUNTAS.map(p=>p.n)].sort(()=>Math.random()-0.5);renderizar();window.scrollTo({top:0,behavior:'smooth'});}
+cargarEstado();actualizarHeader();renderizar();
+</script>
+</body>
+</html>
